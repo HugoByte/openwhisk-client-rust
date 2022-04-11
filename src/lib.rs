@@ -201,4 +201,30 @@ impl Context {
         };
         Err(format!("failed to invoke trigger {} ", name)).map_err(serde::de::Error::custom)
     }
+
+    pub fn invoke_action(&self, name: &str, value: &Value) -> Result<Value, Error> {
+        let client = client();
+        let url = format!(
+            "{}/api/v1/namespaces/{}/actions/{}?result=true",
+            self.host, self.namespace, name
+        );
+
+        if let Ok(response) = invoke_client(
+            client.post(url.clone())
+            .basic_auth(self.user.clone(), Some(self.pass.clone()))
+            .json(value),
+        ){
+            return match response.status(){ 
+                StatusCode::OK => return response.json().map_err(serde::de::Error::custom),
+                _ => Err(format!(
+                    "failed to invoke actions  {} {:?} ",
+                    name,
+                    response.error_for_status()
+                ))
+                .map_err(serde::de::Error::custom),
+                
+            };
+        };
+        Err(format!("failed to invoke actions {} ", name)).map_err(serde::de::Error::custom) 
+    }
 }
