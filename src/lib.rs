@@ -2,20 +2,14 @@ use chesterfield::sync::Database;
 use derive_new::new;
 use reqwest;
 use reqwest::StatusCode;
-use serde_json::{to_value, Error, Value};
-use std::{env, fmt::format, string};
-#[cfg(test)]
-use tokio::runtime::Handle;
+use serde_json::{Error, Value};
+use std::env;
 
 #[derive(new, Debug, Clone)]
 pub struct Config {
-    #[new(value = r#""test:test".to_string()"#)]
     pub api_key: String,
-    #[new(value = r#""http://172.17.0.1:8888".to_string()"#)]
     pub host: String,
-    #[new(value = r#""action".to_string()"#)]
     pub name: String,
-    #[new(value = r#""guest".to_string()"#)]
     pub namespace: String,
     pub insecure: bool,
 }
@@ -30,11 +24,19 @@ pub struct Context {
     pub insecure: bool,
 }
 
-fn client() -> reqwest::blocking::Client {
-    reqwest::blocking::Client::builder()
-        .timeout(None)
-        .build()
-        .unwrap()
+fn client(insecure: bool) -> reqwest::blocking::Client {
+    if insecure == true {
+        return reqwest::blocking::Client::builder()
+            .danger_accept_invalid_certs(insecure)
+            .timeout(None)
+            .build()
+            .unwrap();
+    } else {
+        return reqwest::blocking::Client::builder()
+            .timeout(None)
+            .build()
+            .unwrap();
+    }
 }
 
 fn invoke_client(
@@ -100,12 +102,11 @@ impl Context {
 
     /// To get list of {actions,triggers,rules} in the specified namespaces
     pub fn get_list(&self, endpoint: &str) -> Result<Value, Error> {
-        let client = client();
+        let client = client(self.insecure);
         let url = format!(
             "{}/api/v1/namespaces/{}/{}",
             self.host, self.namespace, endpoint
         );
-
         if let Ok(response) = invoke_client(
             client
                 .get(url)
@@ -122,7 +123,7 @@ impl Context {
     }
 
     pub fn create_rule(&self, name: &str, trigger: &str, action: &str) -> Result<Value, Error> {
-        let client = client();
+        let client = client(self.insecure);
 
         let url = format!(
             "{}/api/v1/namespaces/{}/rules/{}?overwrite=true",
@@ -149,7 +150,7 @@ impl Context {
     }
 
     pub fn create_trigger(&self, name: &str, value: &Value) -> Result<Value, Error> {
-        let client = client();
+        let client = client(self.insecure);
 
         let url = format!(
             "{}/api/v1/namespaces/{}/triggers/{}?overwrite=true",
@@ -177,7 +178,7 @@ impl Context {
     }
 
     pub fn invoke_trigger(&self, name: &str, value: &Value) -> Result<Value, Error> {
-        let client = client();
+        let client = client(self.insecure);
         let url = format!(
             "{}/api/v1/namespaces/{}/triggers/{}?result=true",
             self.host, self.namespace, name
@@ -203,18 +204,19 @@ impl Context {
     }
 
     pub fn invoke_action(&self, name: &str, value: &Value) -> Result<Value, Error> {
-        let client = client();
+        let client = client(self.insecure);
         let url = format!(
             "{}/api/v1/namespaces/{}/actions/{}?result=true",
             self.host, self.namespace, name
         );
 
         if let Ok(response) = invoke_client(
-            client.post(url.clone())
-            .basic_auth(self.user.clone(), Some(self.pass.clone()))
-            .json(value),
-        ){
-            return match response.status(){ 
+            client
+                .post(url.clone())
+                .basic_auth(self.user.clone(), Some(self.pass.clone()))
+                .json(value),
+        ) {
+            return match response.status() {
                 StatusCode::OK => return response.json().map_err(serde::de::Error::custom),
                 _ => Err(format!(
                     "failed to invoke actions  {} {:?} ",
@@ -222,9 +224,76 @@ impl Context {
                     response.error_for_status()
                 ))
                 .map_err(serde::de::Error::custom),
-                
             };
         };
-        Err(format!("failed to invoke actions {} ", name)).map_err(serde::de::Error::custom) 
+        Err(format!("failed to invoke actions {} ", name)).map_err(serde::de::Error::custom)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use chesterfield::sync::Client;
+
+    use super::*;
+
+    fn context() -> Context{
+
+        let config = Config::new(
+            "23bc46b1-71f6-4ed5-8c54-816aa4f8c502:123zO3xZCLrMN6v2BKK1dXYFpXlPkccOFqm12CdAsMgRU4VrNZ9lyGVCGuMDGIwP".to_string(),
+             "https://localhost:31001".to_string(), 
+             "actions".to_string(),
+              "guest".to_string(), 
+              true
+        );
+
+        let couch_db = Client::new("http://127.0.0.1:5984");
+
+        return  Context::new(couch_db.unwrap().database("").unwrap(), Some(&config));
+    }
+    #[test]
+    fn get_list_of_actions_pass() {
+        
+        let context = context();
+
+        let result = context.get_list("actions").unwrap();
+
+        let actual = vec!["cars".to_string(), "carlisy".to_string()];
+
+        for index in 0..result.as_array().unwrap().len() {
+            assert_eq!(result.as_array().unwrap()[index]["name"], actual[index]);
+        }
+    }
+
+    #[test]
+    fn create_triggers(){
+        let topic = "1234".to_string();
+
+        let context = context();
+
+        context.create_trigger(&topic, &serde_json::json!({})).unwrap();
+
+        let triggers = context.get_list("triggers").unwrap();
+
+        for index in 0..triggers.as_array().unwrap().len() {
+            assert_eq!(triggers.as_array().unwrap()[index]["name"], "1234".to_string());
+        }
+
+    }
+
+    #[test]
+    fn create_rules(){
+
+        let trigger = "1234".to_string();
+
+        let context = context();
+
+        context.create_rule("rule1", &trigger, "cars").unwrap();
+
+        let rules = context.get_list("rules").unwrap();
+
+        for index in 0..rules.as_array().unwrap().len() {
+            assert_eq!(rules.as_array().unwrap()[index]["name"], "rule1".to_string());
+        }
+
     }
 }
