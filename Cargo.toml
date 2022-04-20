@@ -20,6 +20,7 @@ wasmtime = "0.35.2"
 harbourmaster= "0.5.0"
 shiplift="0.7.0"
 http = "0.2.6"
+base64 = "0.13.0"
 
 [dev-dependencies]
 tokio = { version = "1.0.0", features = ["macros"] }
