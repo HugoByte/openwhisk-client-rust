@@ -71,7 +71,7 @@ impl Context {
         }
     }
 
-    pub fn namespace(&self) -> &String {
+    pub fn namespace(&self) -> &str {
         &self.namespace
     }
 
@@ -79,11 +79,11 @@ impl Context {
         self.insecure
     }
 
-    pub fn auth(&self) -> (&String, &String) {
+    pub fn auth(&self) -> (&str, &str) {
         (&self.username, &self.password)
     }
 
-    pub fn host(&self) -> &String {
+    pub fn host(&self) -> &str {
         &self.host
     }
 }

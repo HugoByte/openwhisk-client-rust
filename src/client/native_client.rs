@@ -1,6 +1,6 @@
-use std::error::Error;
-
-use crate::api::{ActionService, NamespaceService, RuleService, Service, TriggerService};
+use crate::api::{
+    ActionService, HttpMethods, NamespaceService, RuleService, Service, TriggerService,
+};
 use http::StatusCode;
 use reqwest::blocking::Client;
 use serde_json::Value;
@@ -22,9 +22,9 @@ impl NativeClient {
         let context = Context::new(config);
         let client = http_client(context.is_secure());
         let actions = ActionService::new(client.clone(), context.clone());
-        let triggers = TriggerService::new(client.clone());
-        let rules = RuleService::new(client.clone());
-        let namespaces = NamespaceService::new(client.clone());
+        let triggers = TriggerService::new(client.clone(), context.clone());
+        let rules = RuleService::new(client.clone(), context.clone());
+        let namespaces = NamespaceService::new(client.clone(), context.clone());
         Self {
             client,
             context,
@@ -37,6 +37,18 @@ impl NativeClient {
 
     pub fn actions(&self) -> &ActionService<Client> {
         &self.actions
+    }
+
+    pub fn triggers(&self) -> &TriggerService<Client>{
+        &self.triggers
+    }
+
+    pub fn rules(&self) -> &RuleService<Client>{
+        &self.rules
+    }
+
+    pub fn namespaces(&self) -> &NamespaceService<Client>{
+        &self.namespaces
     }
 }
 
@@ -61,9 +73,9 @@ impl Service for Client {
 
     fn new_request(
         &self,
-        method: String,
-        url: String,
-        use_auth: Option<(String, String)>,
+        method: HttpMethods,
+        url: &str,
+        use_auth: Option<(&str, &str)>,
         body: Option<Value>,
     ) -> Result<Self::Output, String> {
         let body = body.unwrap_or(serde_json::json!({}));
@@ -73,21 +85,25 @@ impl Service for Client {
                 let user = auth.0;
                 let pass = auth.1;
 
-                match method.as_str() {
-                    "get" => return Ok(self.get(url).basic_auth(user, Some(pass))),
-                    "post" => return Ok(self.post(url).basic_auth(user, Some(pass)).json(&body)),
-                    "put" => return Ok(self.put(url).basic_auth(user, Some(pass)).json(&body)),
-                    "delete" => {
+                match method {
+                    HttpMethods::GET => return Ok(self.get(url).basic_auth(user, Some(pass))),
+                    HttpMethods::POST => {
+                        return Ok(self.post(url).basic_auth(user, Some(pass)).json(&body))
+                    }
+                    HttpMethods::PUT => {
+                        return Ok(self.put(url).basic_auth(user, Some(pass)).json(&body))
+                    }
+                    HttpMethods::DELETE => {
                         return Ok(self.delete(url).basic_auth(user, Some(pass)).json(&body))
                     }
                     _ => Err(format!("Falied to create request")),
                 }
             }
-            None => match method.as_str() {
-                "get" => return Ok(self.get(url)),
-                "post" => return Ok(self.post(url).json(&body)),
-                "put" => return Ok(self.put(url).json(&body)),
-                "delete" => return Ok(self.delete(url).json(&body)),
+            None => match method {
+                HttpMethods::GET => return Ok(self.get(url)),
+                HttpMethods::POST => return Ok(self.post(url).json(&body)),
+                HttpMethods::PUT => return Ok(self.put(url).json(&body)),
+                HttpMethods::DELETE => return Ok(self.delete(url).json(&body)),
                 _ => Err(format!("Falied to create request")),
             },
         }
@@ -97,7 +113,7 @@ impl Service for Client {
         if let Ok(response) = request.send() {
             return match response.status() {
                 StatusCode::OK => Ok(response.json().unwrap()),
-                _ => Err(format!("failed to invoke request")),
+                _ => Err(format!("failed to invoke request {}",response.status())),
             };
         };
         Err(format!("failed to invoke request"))
