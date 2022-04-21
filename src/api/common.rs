@@ -3,9 +3,9 @@ use serde::{Deserialize, Serialize};
 pub static ACTION_ENDPOINT: &str = "actions";
 pub static TRIGGERS_ENDPOINT: &str = "triggers";
 pub static RULES_ENDPOINT: &str = "rules";
-pub static NAMESPACE: &str = "namespaces";
+pub static NAMESPACE_ENDPOINT: &str = "namespaces";
 
-#[derive(Debug, Deserialize, Serialize, Clone,Default,PartialEq)]
+#[derive(Debug, Deserialize, Serialize, Clone, Default, PartialEq)]
 pub struct Limits {
     #[serde(default)]
     pub timeout: i64,

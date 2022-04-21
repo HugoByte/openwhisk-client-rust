@@ -2,8 +2,9 @@ use crate::api::{
     ActionService, HttpMethods, NamespaceService, RuleService, Service, TriggerService,
 };
 use http::StatusCode;
-use reqwest::blocking::Client;
+use reqwest::blocking::{Client, Response};
 use serde_json::Value;
+extern crate reqwest;
 
 use super::common::{Context, WskProperties};
 
@@ -39,15 +40,15 @@ impl NativeClient {
         &self.actions
     }
 
-    pub fn triggers(&self) -> &TriggerService<Client>{
+    pub fn triggers(&self) -> &TriggerService<Client> {
         &self.triggers
     }
 
-    pub fn rules(&self) -> &RuleService<Client>{
+    pub fn rules(&self) -> &RuleService<Client> {
         &self.rules
     }
 
-    pub fn namespaces(&self) -> &NamespaceService<Client>{
+    pub fn namespaces(&self) -> &NamespaceService<Client> {
         &self.namespaces
     }
 }
@@ -113,9 +114,13 @@ impl Service for Client {
         if let Ok(response) = request.send() {
             return match response.status() {
                 StatusCode::OK => Ok(response.json().unwrap()),
-                _ => Err(format!("failed to invoke request {}",response.status())),
+                _ => Err(format!("failed to invoke request {}", response.status())),
             };
         };
         Err(format!("failed to invoke request"))
     }
 }
+
+
+
+

@@ -1,7 +1,5 @@
-use std::any::Any;
-
 use super::{HttpMethods, Limits, Service, TRIGGERS_ENDPOINT};
-use crate::client::Context;
+use crate::{client::Context, NAMESPACE_ENDPOINT};
 use derive_new::new;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -12,17 +10,17 @@ pub struct TriggerService<T> {
     context: Context,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone,Default)]
 pub struct Trigger {
-    #[serde(skip_serializing)]
+   #[serde(default)]
     pub namespace: String,
-    #[serde(skip_serializing)]
+   #[serde(default)]
     pub name: String,
-    #[serde(skip_serializing)]
+   #[serde(default)]
     pub version: String,
-    #[serde(skip_serializing)]
+   #[serde(default)]
     pub publish: bool,
-    #[serde(skip_serializing)]
+   #[serde(default)]
     pub updated: i64,
     pub annotations: Vec<KeyValue>,
     #[serde(default)]
@@ -33,7 +31,7 @@ pub struct Trigger {
     pub limits: Limits,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone,PartialEq)]
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 pub struct KeyValue {
     pub key: String,
     pub value: Value,
@@ -51,8 +49,9 @@ where
 {
     pub fn list(&self) -> Result<Vec<Trigger>, String> {
         let url = format!(
-            "{}/api/v1/namespaces/{}/{}",
+            "{}/api/v1/{}/{}/{}",
             self.context.host(),
+            NAMESPACE_ENDPOINT,
             self.context.namespace(),
             TRIGGERS_ENDPOINT
         );
@@ -78,8 +77,9 @@ where
 
     pub fn insert(&self, trigger: &Trigger, overwrite: bool) -> Result<Trigger, String> {
         let url = format!(
-            "{}/api/v1/namespaces/{}/{}/{}?overwrite={}",
+            "{}/api/v1/{}/{}/{}/{}?overwrite={}",
             self.context.host(),
+            NAMESPACE_ENDPOINT,
             self.context.namespace(),
             TRIGGERS_ENDPOINT,
             trigger.name,
@@ -118,8 +118,9 @@ where
 
     pub fn get(&self, trigger_name: &str) -> Result<Trigger, String> {
         let url = format!(
-            "{}/api/v1/namespaces/{}/{}/{}",
+            "{}/api/v1/{}/{}/{}/{}",
             self.context.host(),
+            NAMESPACE_ENDPOINT,
             self.context.namespace(),
             TRIGGERS_ENDPOINT,
             trigger_name
@@ -151,8 +152,9 @@ where
 
     pub fn delete(&self, trigger_name: &str) -> Result<Trigger, String> {
         let url = format!(
-            "{}/api/v1/namespaces/{}/{}/{}",
+            "{}/api/v1/{}/{}/{}/{}",
             self.context.host(),
+            NAMESPACE_ENDPOINT,
             self.context.namespace(),
             TRIGGERS_ENDPOINT,
             trigger_name
@@ -184,8 +186,9 @@ where
 
     pub fn fire(&self, trigger_name: &str, payload: Value) -> Result<Trigger, String> {
         let url = format!(
-            "{}/api/v1/namespaces/{}/{}/{}",
+            "{}/api/v1/{}/{}/{}/{}",
             self.context.host(),
+            NAMESPACE_ENDPOINT,
             self.context.namespace(),
             TRIGGERS_ENDPOINT,
             trigger_name

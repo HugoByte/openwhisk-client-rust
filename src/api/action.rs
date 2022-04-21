@@ -1,4 +1,4 @@
-use crate::{client::Context, KeyValue};
+use crate::{client::Context, KeyValue, NAMESPACE_ENDPOINT};
 use derive_new::new;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -11,7 +11,7 @@ pub struct ActionService<T> {
     context: Context,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone,PartialEq)]
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 pub struct Action {
     #[serde(default)]
     pub namespace: String,
@@ -31,7 +31,7 @@ pub struct Action {
     pub updated: i64,
     pub annotations: Vec<KeyValue>,
 }
-#[derive(Debug, Deserialize, Serialize, Clone,PartialEq)]
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 pub struct Exec {
     #[serde(default)]
     pub kind: String,
@@ -55,8 +55,9 @@ where
 {
     pub fn list(&self) -> Result<Vec<Action>, String> {
         let url = format!(
-            "{}/api/v1/namespaces/{}/{}",
+            "{}/api/v1/{}/{}/{}",
             self.context.host(),
+            NAMESPACE_ENDPOINT,
             self.context.namespace(),
             ACTION_ENDPOINT
         );
@@ -81,8 +82,9 @@ where
 
     pub fn get(&self, action_name: &str, fetch_code: bool) -> Result<Action, String> {
         let url = format!(
-            "{}/api/v1/namespaces/{}/{}/{}?code={}",
+            "{}/api/v1/{}/{}/{}/{}?code={}",
             self.context.host(),
+            NAMESPACE_ENDPOINT,
             self.context.namespace(),
             ACTION_ENDPOINT,
             action_name,
@@ -99,7 +101,7 @@ where
             .unwrap();
 
         match self.client.invoke_request(request) {
-            Ok(x) =>  match serde_json::from_value(x) {
+            Ok(x) => match serde_json::from_value(x) {
                 Ok(actions) => Ok(actions),
                 Err(err) => Err(format!("Failed to deserailize actions {}", err)),
             },
@@ -109,8 +111,9 @@ where
 
     pub fn delete(&self, action_name: &str) -> Result<Action, String> {
         let url = format!(
-            "{}/api/v1/namespaces/{}/{}/{}?code=false",
+            "{}/api/v1/{}/{}/{}/{}?code=false",
             self.context.host(),
+            NAMESPACE_ENDPOINT,
             self.context.namespace(),
             ACTION_ENDPOINT,
             action_name,
@@ -136,8 +139,9 @@ where
 
     pub fn insert(&self, action: &Action, overwrite: bool) -> Result<Action, String> {
         let url = format!(
-            "{}/api/v1/namespaces/{}/{}/{}?overwrite={}",
+            "{}/api/v1/{}/{}/{}/{}?overwrite={}",
             self.context.host(),
+            NAMESPACE_ENDPOINT,
             self.context.namespace(),
             ACTION_ENDPOINT,
             action.name,
@@ -149,7 +153,7 @@ where
         let pass = user_auth.1;
 
         let body = serde_json::to_value(&action).unwrap();
-        println!("{}",body);
+       
 
         let request = self
             .client
@@ -162,7 +166,7 @@ where
             .unwrap();
 
         match self.client.invoke_request(request) {
-            Ok(x) =>  match serde_json::from_value(x) {
+            Ok(x) => match serde_json::from_value(x) {
                 Ok(actions) => Ok(actions),
                 Err(err) => Err(format!("Failed to deserailize actions {}", err)),
             },
@@ -177,8 +181,9 @@ where
         result: bool,
     ) -> Result<Action, String> {
         let url = format!(
-            "{}/api/v1/namespaces/{}/{}/{}?blocking={}&result={}",
+            "{}/api/v1/{}/{}/{}/{}?blocking={}&result={}",
             self.context.host(),
+            NAMESPACE_ENDPOINT,
             self.context.namespace(),
             ACTION_ENDPOINT,
             action_name,

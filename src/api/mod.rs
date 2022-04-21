@@ -1,13 +1,13 @@
 mod action;
-mod rule;
-mod trigger;
-mod traits;
 mod common;
 mod namespace;
+mod rule;
+mod traits;
+mod trigger;
 
 pub use action::*;
-pub use rule::*;
-pub use trigger::*;
-pub use namespace::*;
-pub use traits::*;
 pub use common::*;
+pub use namespace::*;
+pub use rule::*;
+pub use traits::*;
+pub use trigger::*;
