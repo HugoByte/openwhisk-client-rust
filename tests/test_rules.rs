@@ -1,4 +1,4 @@
-use openwhisk_rust::{NativeClient, Rule, Trigger, WskProperties};
+use openwhisk_rust::{Action, Exec, KeyValue, OpenwhiskClient, WskProperties,NativeClient, Rule, Trigger};
 
 #[test]
 fn test_list_rules_native_client() {
@@ -12,7 +12,7 @@ fn test_list_rules_native_client() {
          false
     );
 
-    let client = NativeClient::new(Some(&wsk_properties));
+    let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
 
     let actions = serde_json::to_value(client.rules().list().unwrap()).unwrap();
     let expected: String = serde_json::to_string(&actions).unwrap();
@@ -32,7 +32,7 @@ fn test_create_rule_native_clients() {
          false
     );
 
-    let client = NativeClient::new(Some(&wsk_properties));
+    let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
 
     let rule = Rule {
         name: "sample_rule".to_string(),
@@ -66,7 +66,7 @@ fn test_get_rule_property_native_client() {
          false
     );
 
-    let client = NativeClient::new(Some(&wsk_properties));
+    let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
 
     let rule = serde_json::to_value(client.rules().get("sample_rule").unwrap()).unwrap();
     let expected: String = serde_json::to_string(&rule).unwrap();

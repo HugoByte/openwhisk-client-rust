@@ -1,4 +1,4 @@
-use openwhisk_rust::{Action, Exec, KeyValue, NativeClient, WskProperties};
+use openwhisk_rust::{Action, Exec, KeyValue, NativeClient, OpenwhiskClient, WskProperties};
 use std::{fs, io::Read};
 
 #[test]
@@ -13,9 +13,10 @@ fn test_list_actions_native_client() {
          false
     );
 
-    let client = NativeClient::new(Some(&wsk_properties));
+    let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
 
     let actions = serde_json::to_value(client.actions().list().unwrap()).unwrap();
+
     let expected: String = serde_json::to_string(&actions).unwrap();
 
     assert!(expected.contains("cars"));
@@ -33,8 +34,9 @@ fn test_get_action_property_native_client() {
          false
     );
 
-    let client = NativeClient::new(Some(&wsk_properties));
+    let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
     let actions = serde_json::to_value(client.actions().get("cars", false).unwrap()).unwrap();
+
     let expected: String = serde_json::to_string(&actions).unwrap();
     assert!(expected.contains("cars"));
 }
@@ -51,7 +53,7 @@ fn test_delete_action_native_client() {
          false
     );
 
-    let client = NativeClient::new(Some(&wsk_properties));
+    let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
 
     client.actions().delete("cars").unwrap();
 
@@ -72,7 +74,7 @@ fn test_create_action() {
          false
     );
 
-    let client = NativeClient::new(Some(&wsk_properties));
+    let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
 
     let mut contents =
         fs::File::open("/home/soul/Downloads/actions/car_list.zip").expect("File not found");

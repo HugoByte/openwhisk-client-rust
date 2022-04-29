@@ -1,4 +1,5 @@
-use openwhisk_rust::{KeyValue, NativeClient, Trigger, WskProperties};
+use openwhisk_rust::{Action, Exec, KeyValue, OpenwhiskClient, WskProperties,NativeClient, Trigger};
+
 
 #[test]
 fn test_list_triggers_native_client() {
@@ -12,7 +13,7 @@ fn test_list_triggers_native_client() {
          false
     );
 
-    let client = NativeClient::new(Some(&wsk_properties));
+    let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
 
     
 
@@ -33,7 +34,7 @@ fn test_create_trigger_native_client() {
          false
     );
 
-    let client = NativeClient::new(Some(&wsk_properties));
+    let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
 
     let trigger = Trigger {
         
@@ -71,7 +72,7 @@ fn test_delete_trigger_native_client() {
          false
     );
 
-    let client = NativeClient::new(Some(&wsk_properties));
+    let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
 
     
 

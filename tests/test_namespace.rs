@@ -1,4 +1,4 @@
-use openwhisk_rust::{NativeClient, WskProperties};
+use openwhisk_rust::{Action, Exec, KeyValue, OpenwhiskClient, WskProperties,NativeClient};
 
 #[test]
 fn test_list_namespaces_native_client() {
@@ -12,7 +12,7 @@ fn test_list_namespaces_native_client() {
          false
     );
 
-    let client = NativeClient::new(Some(&wsk_properties));
+    let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
 
     let namespaces = client.namespaces().list().unwrap();
 
