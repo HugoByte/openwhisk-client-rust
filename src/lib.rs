@@ -1,4 +1,6 @@
 mod api;
 mod client;
-pub use api::*;
-pub use client::{NativeClient, WskProperties};
+pub use api::{Action,Trigger,KeyValue,Exec,Rule};
+pub use client::{OpenWhisk,OpenwhiskClient,NativeClient,WskProperties};
+
+

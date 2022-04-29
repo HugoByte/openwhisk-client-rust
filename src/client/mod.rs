@@ -1,6 +1,5 @@
 mod common;
-mod native_client;
-mod wasm_client;
+mod openwhisk_client;
 
-pub use common::{Context, WskProperties};
-pub use native_client::NativeClient;
+pub use common::*;
+pub use openwhisk_client::OpenwhiskClient;

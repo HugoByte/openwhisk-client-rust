@@ -1,6 +1,7 @@
 use derive_new::new;
 
-use crate::{client::Context, HttpMethods, Service, NAMESPACE_ENDPOINT};
+use crate::{client::Context} ;
+use super::{HttpMethods, Service, NAMESPACE_ENDPOINT};
 
 #[derive(new, Debug, Clone)]
 pub struct NamespaceService<T> {

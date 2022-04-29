@@ -2,7 +2,8 @@ use derive_new::new;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use crate::{client::Context, HttpMethods, KeyValue, Service, NAMESPACE_ENDPOINT, RULES_ENDPOINT};
+use super::{HttpMethods, KeyValue, Service, NAMESPACE_ENDPOINT, RULES_ENDPOINT};
+use crate::client::Context;
 
 #[derive(new, Debug, Clone)]
 pub struct RuleService<T> {

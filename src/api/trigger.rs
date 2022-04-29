@@ -1,5 +1,6 @@
 use super::{HttpMethods, Limits, Service, TRIGGERS_ENDPOINT};
-use crate::{client::Context, NAMESPACE_ENDPOINT};
+use crate::client::Context; 
+use super::NAMESPACE_ENDPOINT;
 use derive_new::new;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;

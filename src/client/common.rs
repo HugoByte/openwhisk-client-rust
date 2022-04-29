@@ -3,6 +3,13 @@ use serde::{Deserialize, Serialize};
 use std::env;
 use std::fmt::Debug;
 
+use crate::api::{HttpMethods, Service};
+
+use http::request::Builder;
+use http::{request, Request, StatusCode};
+use reqwest::blocking::Client;
+use serde_json::Value;
+
 #[derive(new, Debug, Clone)]
 pub struct WskProperties {
     pub auth_token: String,
@@ -21,6 +28,11 @@ pub struct Context {
     username: String,
     password: String,
     version: String,
+}
+
+pub trait OpenWhisk {
+    type Output;
+    fn new_whisk_client(insecure: Option<bool>) -> Self::Output;
 }
 
 impl Context {
@@ -85,5 +97,92 @@ impl Context {
 
     pub fn host(&self) -> &str {
         &self.host
+    }
+}
+pub struct NativeClient(Client);
+
+impl OpenWhisk for NativeClient {
+    type Output = NativeClient;
+    fn new_whisk_client(insecure: Option<bool>) -> Self::Output {
+        match insecure {
+            Some(x) => match x {
+                true => NativeClient(
+                    reqwest::blocking::Client::builder()
+                        .danger_accept_invalid_certs(x)
+                        .timeout(None)
+                        .build()
+                        .unwrap(),
+                ),
+                false => NativeClient(
+                    reqwest::blocking::Client::builder()
+                        .timeout(None)
+                        .build()
+                        .unwrap(),
+                ),
+            },
+            None => todo!(),
+        }
+    }
+}
+
+impl Service for NativeClient {
+    type Output = reqwest::blocking::RequestBuilder;
+
+    fn new_request(
+        &self,
+        method: HttpMethods,
+        url: &str,
+        use_auth: Option<(&str, &str)>,
+        body: Option<Value>,
+    ) -> Result<Self::Output, String> {
+        let body = body.unwrap_or(serde_json::json!({}));
+
+        match use_auth {
+            Some(auth) => {
+                let user = auth.0;
+                let pass = auth.1;
+
+                match method {
+                    HttpMethods::GET => return Ok(self.0.get(url).basic_auth(user, Some(pass))),
+                    HttpMethods::POST => {
+                        return Ok(self.0.post(url).basic_auth(user, Some(pass)).json(&body))
+                    }
+                    HttpMethods::PUT => {
+                        return Ok(self.0.put(url).basic_auth(user, Some(pass)).json(&body))
+                    }
+                    HttpMethods::DELETE => {
+                        return Ok(self.0.delete(url).basic_auth(user, Some(pass)).json(&body))
+                    }
+                    _ => Err(format!("Falied to create request")),
+                }
+            }
+            None => match method {
+                HttpMethods::GET => return Ok(self.0.get(url)),
+                HttpMethods::POST => return Ok(self.0.post(url).json(&body)),
+                HttpMethods::PUT => return Ok(self.0.put(url).json(&body)),
+                HttpMethods::DELETE => return Ok(self.0.delete(url).json(&body)),
+                _ => Err(format!("Falied to create request")),
+            },
+        }
+    }
+
+    fn invoke_request(&self, request: Self::Output) -> Result<Value, String> {
+        if let Ok(response) = request.send() {
+            return match response.status() {
+                StatusCode::OK => Ok(response.json().unwrap()),
+                _ => Err(format!("failed to invoke request {}", response.status())),
+            };
+        };
+        Err(format!("failed to invoke request"))
+    }
+}
+
+impl Clone for NativeClient {
+    fn clone(&self) -> Self {
+        NativeClient(self.0.clone())
+    }
+
+    fn clone_from(&mut self, _source: &Self) {
+        NativeClient(self.0.clone());
     }
 }
