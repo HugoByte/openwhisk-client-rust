@@ -4,9 +4,7 @@ use std::env;
 use std::fmt::Debug;
 
 use crate::api::{HttpMethods, Service};
-
-use http::request::Builder;
-use http::{request, Request, StatusCode};
+use http::StatusCode;
 use reqwest::blocking::Client;
 use serde_json::Value;
 

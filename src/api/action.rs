@@ -1,9 +1,9 @@
-use crate::{client::Context,};
+use crate::client::Context;
 use derive_new::new;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use super::{traits::Service, HttpMethods, Limits, ACTION_ENDPOINT, KeyValue, NAMESPACE_ENDPOINT};
+use super::{traits::Service, HttpMethods, KeyValue, Limits, ACTION_ENDPOINT, NAMESPACE_ENDPOINT};
 
 #[derive(new, Debug, Deserialize, Serialize, Clone)]
 pub struct ActionService<T> {
@@ -11,7 +11,7 @@ pub struct ActionService<T> {
     context: Context,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+#[derive(Debug, Default, Deserialize, Serialize, Clone, PartialEq)]
 pub struct Action {
     #[serde(default)]
     pub namespace: String,
@@ -31,7 +31,7 @@ pub struct Action {
     pub updated: i64,
     pub annotations: Vec<KeyValue>,
 }
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+#[derive(Debug, Default, Deserialize, Serialize, Clone, PartialEq)]
 pub struct Exec {
     #[serde(default)]
     pub kind: String,
@@ -153,7 +153,6 @@ where
         let pass = user_auth.1;
 
         let body = serde_json::to_value(&action).unwrap();
-       
 
         let request = self
             .client
@@ -179,7 +178,7 @@ where
         payload: Value,
         blocking: bool,
         result: bool,
-    ) -> Result<Action, String> {
+    ) -> Result<Value, String> {
         let url = format!(
             "{}/api/v1/{}/{}/{}/{}?blocking={}&result={}",
             self.context.host(),
@@ -209,7 +208,7 @@ where
                 Ok(actions) => Ok(actions),
                 Err(err) => Err(format!("Failed to deserailize actions {}", err)),
             },
-            Err(x) => Err(format!("Failed to get action properties {}", x)),
+            Err(x) => Err(format!("Failed to invoke action {}", x)),
         }
     }
 }

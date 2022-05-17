@@ -2,9 +2,9 @@
 name = "openwhisk-rust"
 version = "0.1.0"
 authors = ["HugoByte <hello@hugobyte.com>"]
-repository = "https://github.com/hugobyte/openwhisk-rust"
+repository = "https://github.com/hugobyte/openwhisk-client-rust"
 license = "Apache-2.0"
-edition = "2021"
+edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -15,14 +15,6 @@ serde_derive = "1.0.136"
 chesterfield = "0.0.1"
 reqwest = { version = "0.11.10", features = ["blocking", "json", "native-tls"] }
 derive-new = "0.5.9"
-wasi-experimental-http = "0.9.0"
-wasmtime = "0.35.2"
-harbourmaster= "0.5.0"
-shiplift="0.7.0"
 http = "0.2.6"
 base64 = "0.13.0"
 
-[dev-dependencies]
-tokio = { version = "1.0.0", features = ["macros"] }
-wiremock = "0.5"
-envconfig = "0.10.0"

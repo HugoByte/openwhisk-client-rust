@@ -1,6 +1,6 @@
 use derive_new::new;
 
-use crate::{client::Context} ;
+use crate::client::Context ;
 use super::{HttpMethods, Service, NAMESPACE_ENDPOINT};
 
 #[derive(new, Debug, Clone)]
