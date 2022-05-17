@@ -5,7 +5,7 @@ use serde_json::Value;
 use super::{HttpMethods, KeyValue, Service, NAMESPACE_ENDPOINT, RULES_ENDPOINT};
 use crate::client::Context;
 
-#[derive(new, Debug, Clone)]
+#[derive(new,Default, Debug, Clone)]
 pub struct RuleService<T> {
     client: T,
     context: Context,

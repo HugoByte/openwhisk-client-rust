@@ -5,7 +5,7 @@ use derive_new::new;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-#[derive(new, Debug, Clone)]
+#[derive(new,Default, Debug, Clone)]
 pub struct TriggerService<T> {
     client: T,
     context: Context,

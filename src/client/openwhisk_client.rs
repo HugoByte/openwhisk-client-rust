@@ -4,7 +4,7 @@ use super::{
     OpenWhisk,
 };
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Default, Clone)]
 pub struct OpenwhiskClient<T> {
     pub context: Context,
     pub client: T,

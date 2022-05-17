@@ -18,7 +18,7 @@ pub struct WskProperties {
     pub verbose: bool,
     pub debug: bool,
 }
-#[derive(Debug, Deserialize, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone,Default)]
 pub struct Context {
     host: String,
     namespace: String,
@@ -72,12 +72,12 @@ impl Context {
         };
 
         Context {
-            host: host,
-            namespace: namespace,
+            host,
+            namespace,
             insecure: connectiontype,
             username: auth[0].to_string(),
             password: auth[1].to_string(),
-            version: version,
+            version,
         }
     }
 

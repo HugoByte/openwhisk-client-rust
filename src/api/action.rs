@@ -5,7 +5,7 @@ use serde_json::Value;
 
 use super::{traits::Service, HttpMethods, KeyValue, Limits, ACTION_ENDPOINT, NAMESPACE_ENDPOINT};
 
-#[derive(new, Debug, Deserialize, Serialize, Clone)]
+#[derive(new, Debug,Default, Deserialize, Serialize, Clone)]
 pub struct ActionService<T> {
     client: T,
     context: Context,
