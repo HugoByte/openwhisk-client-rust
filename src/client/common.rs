@@ -97,6 +97,8 @@ impl Context {
         &self.host
     }
 }
+
+#[derive(Debug,Default)]
 pub struct NativeClient(Client);
 
 impl OpenWhisk for NativeClient {
