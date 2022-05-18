@@ -8,7 +8,7 @@ use http::StatusCode;
 use reqwest::blocking::Client;
 use serde_json::Value;
 
-#[derive(new, Debug, Clone)]
+#[derive(new, Debug, Clone, Default)]
 pub struct WskProperties {
     pub auth_token: String,
     pub host: String,
