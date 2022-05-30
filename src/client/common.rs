@@ -8,17 +8,24 @@ use http::StatusCode;
 use reqwest::blocking::Client;
 use serde_json::Value;
 
-#[derive(new, Debug, Clone, Default, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct WskProperties {
     pub auth_token: String,
     pub host: String,
+    #[serde(default = "default")]
     pub version: String,
     pub insecure: bool,
     pub namespace: String,
+    #[serde(default = "bool::default")]
     pub verbose: bool,
+    #[serde(default = "bool::default")]
     pub debug: bool,
 }
-#[derive(Debug, Deserialize, Serialize, Clone,Default)]
+
+fn default() -> String {
+    "v1".to_string()
+}
+#[derive(Debug, Deserialize, Serialize, Clone, Default)]
 pub struct Context {
     host: String,
     namespace: String,
@@ -26,6 +33,31 @@ pub struct Context {
     username: String,
     password: String,
     version: String,
+}
+
+impl WskProperties {
+    pub fn new(auth_token: String, host: String, insecure: bool, namespace: String) -> Self {
+        Self {
+            auth_token,
+            host,
+            insecure,
+            namespace,
+            version: default(),
+            ..Default::default()
+        }
+    }
+
+    pub fn set_verbose_debug_version(&self, debug: bool, verbose: bool, version: String) -> Self {
+        Self {
+            auth_token: self.auth_token.clone(),
+            host: self.host.clone(),
+            version,
+            insecure: self.insecure.clone(),
+            namespace: self.namespace.clone(),
+            verbose,
+            debug,
+        }
+    }
 }
 
 pub trait OpenWhisk {
@@ -98,7 +130,7 @@ impl Context {
     }
 }
 
-#[derive(Debug,Default)]
+#[derive(Debug, Default)]
 pub struct NativeClient(Client);
 
 impl OpenWhisk for NativeClient {
@@ -186,3 +218,5 @@ impl Clone for NativeClient {
         NativeClient(self.0.clone());
     }
 }
+
+
