@@ -7,7 +7,7 @@ license = "Apache-2.0"
 edition = "2018"
 description = "A rust client for OpenWhisk"
 documentation = ""
-readme = ""
+readme = "readme.md"
 
 exclude = [
     "tests/*",
