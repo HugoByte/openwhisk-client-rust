@@ -6,7 +6,7 @@ repository = "https://github.com/hugobyte/openwhisk-client-rust"
 license = "Apache-2.0"
 edition = "2018"
 description = "A rust client for OpenWhisk"
-documentation = ""
+documentation = "https://github.com/hugobyte/openwhisk-client-rust"
 readme = "readme.md"
 
 exclude = [
