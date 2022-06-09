@@ -5,46 +5,68 @@ use serde_json::Value;
 
 use super::{traits::Service, HttpMethods, KeyValue, Limits, ACTION_ENDPOINT, NAMESPACE_ENDPOINT};
 
+/// Representation of Action Service
 #[derive(new, Debug,Default, Deserialize, Serialize, Clone)]
 pub struct ActionService<T> {
+    /// A action service must have a client to handle http request
     client: T,
+    /// A action service uses the context which sets openwhisk properties
     context: Context,
 }
 
+/// Represenation of Action 
 #[derive(Debug, Default, Deserialize, Serialize, Clone, PartialEq)]
 pub struct Action {
+    /// A action must have a namspace where it exists
     #[serde(default)]
     pub namespace: String,
+    /// A action must have a name to represent it 
     #[serde(default)]
     pub name: String,
+    /// A action must have a versioning
     #[serde(skip_serializing)]
     pub version: String,
+    /// A action can take concurrrent limit
     #[serde(skip_serializing)]
     pub limits: Limits,
+    /// A action must have Exec properties 
     pub exec: Exec,
+    /// A action must have error to handle error created
     #[serde(default)]
     #[serde(skip_serializing)]
     pub error: String,
+    /// Toggle to publish action
     #[serde(skip_serializing)]
     pub publish: bool,
+    /// Updated version count of actions
     #[serde(skip_serializing)]
     pub updated: i64,
+    /// Keyvalue pair for annotate Actions
     pub annotations: Vec<KeyValue>,
 }
+
+/// Actions Execucatble properties
 #[derive(Debug, Default, Deserialize, Serialize, Clone, PartialEq)]
 pub struct Exec {
+    /// Action's Kind
     #[serde(default)]
     pub kind: String,
+    /// Action's Code
     #[serde(default)]
     pub code: String,
+    /// Action's Image
     #[serde(default)]
     pub image: String,
+    /// Action's Init method
     #[serde(default)]
     pub init: String,
+    /// Action's Main method
     #[serde(default)]
     pub main: String,
+    /// Action's components
     #[serde(default)]
     pub components: Vec<String>,
+    /// Toogled to true Action will be of binary
     #[serde(default)]
     pub binary: bool,
 }
@@ -53,6 +75,7 @@ impl<T> ActionService<T>
 where
     T: Service,
 {
+    /// Returns a list of Actions 
     pub fn list(&self) -> Result<Vec<Action>, String> {
         let url = format!(
             "{}/api/v1/{}/{}/{}",
@@ -80,6 +103,14 @@ where
         }
     }
 
+    ///
+    /// Returns Properties of action by using action name
+    /// 
+    /// # Arguments
+    /// * `action_name` - String slice that holds action name
+    /// * `fetch_code`  - Toggle to get code for the action 
+    /// 
+    
     pub fn get(&self, action_name: &str, fetch_code: bool) -> Result<Action, String> {
         let url = format!(
             "{}/api/v1/{}/{}/{}/{}?code={}",
@@ -109,6 +140,12 @@ where
         }
     }
 
+    ///
+    /// Delete Action and returns deleted Action by using action name
+    /// 
+    /// # Arguments
+    /// * `action_name` - String slice that holds action name
+    /// 
     pub fn delete(&self, action_name: &str) -> Result<Action, String> {
         let url = format!(
             "{}/api/v1/{}/{}/{}/{}?code=false",
@@ -136,7 +173,14 @@ where
             Err(x) => Err(format!("Failed to get action properties {}", x)),
         }
     }
-
+    
+    ///
+    /// Insert Action and returns new action created
+    /// 
+    /// # Arguments
+    /// * `action`    - String slice that holds action name
+    /// * `overwrite` - Bool toggle overwite of action if it present already
+    /// 
     pub fn insert(&self, action: &Action, overwrite: bool) -> Result<Action, String> {
         let url = format!(
             "{}/api/v1/{}/{}/{}/{}?overwrite={}",
@@ -172,6 +216,16 @@ where
             Err(x) => Err(format!("Failed to get action properties {}", x)),
         }
     }
+
+    ///
+    /// Invoke Action and returns action result
+    /// 
+    /// # Arguments
+    /// * `action_name` - String slice that holds action name
+    /// * `payload`     - Params that action takes for exection
+    /// * `blocking`    - Toggle to block action execution until it returns result
+    /// * `result`      - Toggled only action result is returned
+    /// 
     pub fn invoke(
         &self,
         action_name: &str,

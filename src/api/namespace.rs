@@ -3,9 +3,12 @@ use derive_new::new;
 use crate::client::Context ;
 use super::{HttpMethods, Service, NAMESPACE_ENDPOINT};
 
+/// Representation of Namespace Service
 #[derive(new,Default, Debug, Clone)]
 pub struct NamespaceService<T> {
+    /// A Namespace service must have a client to handle http request
     client: T,
+    /// A Namespace service uses the context which sets openwhisk properties
     context: Context,
 }
 
@@ -13,6 +16,7 @@ impl<T> NamespaceService<T>
 where
     T: Service,
 {
+    /// The list function gets inputs from the struct and returns the list of namespaces available 
     pub fn list(&self) -> Result<Vec<String>, String> {
         let url = format!("{}/api/v1/{}/", self.context.host(), NAMESPACE_ENDPOINT);
 

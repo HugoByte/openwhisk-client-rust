@@ -11,8 +11,8 @@ fn test_list_rules_native_client() {
 
     let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
 
-    let actions = serde_json::to_value(client.rules().list().unwrap()).unwrap();
-    let expected: String = serde_json::to_string(&actions).unwrap();
+    let rules = serde_json::to_value(client.rules().list().unwrap()).unwrap();
+    let expected: String = serde_json::to_string(&rules).unwrap();
 
     assert!(expected.contains(""));
 }

@@ -5,37 +5,54 @@ use serde_json::Value;
 use super::{HttpMethods, KeyValue, Service, NAMESPACE_ENDPOINT, RULES_ENDPOINT};
 use crate::client::Context;
 
+/// Representation of rule Service
 #[derive(new,Default, Debug, Clone)]
 pub struct RuleService<T> {
+    /// A rule service must have a client to handle http request
     client: T,
+    /// A rule service uses the context which sets openwhisk properties
     context: Context,
 }
 
+/// Representation of Rule
 #[derive(new, Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Rule {
+    /// A rule must have a namspace where it exists
     #[serde(default)]
     pub namespace: String,
+    /// A rule must have a name to represent it 
     #[serde(default)]
     pub name: String,
+    /// A action must have a versioning
     #[serde(default)]
     pub version: String,
+    /// Keyvalue pair for annotate rules
     #[serde(default)]
     pub annotations: Vec<KeyValue>,
+    /// The execution status of the rule
     pub status: String,
+    /// A rule must have a trigger mapped to it
     #[serde(default)]
     pub trigger: Value,
+    /// A rule must have an action to pass the trigger
     #[serde(default)]
     pub action: Value,
+    /// Toggle to publish rule
     #[serde(default)]
     pub publish: bool,
+    /// Updated version count of actions
     #[serde(default)]
     pub updated: i64,
 }
 
+/// Representation of rules list options
 #[derive(new, Debug, Clone, Serialize, Deserialize, Default)]
 pub struct RuleListOptions {
+    /// The limit for the required rules.
     pub limit: i64,
+    /// The counts to be skipped.
     pub skip: i64,
+    /// Toggle to get documents.
     pub docs: bool,
 }
 
@@ -52,6 +69,7 @@ impl<T> RuleService<T>
 where
     T: Service,
 {
+    /// Returns a list of Rules 
     pub fn list(&self) -> Result<Vec<Rule>, String> {
         let url = format!(
             "{}/api/v1/{}/{}/{}",
@@ -79,6 +97,12 @@ where
         }
     }
 
+    /// Inserts a rule
+    /// 
+    /// # Arguments
+    /// * `rule` - The rule ro be inserted
+    /// * `overwrite`  - Toggle to get overwrtite an existing rule
+    ///  
     pub fn insert(&self, rule: &Rule, overwrite: bool) -> Result<Rule, String> {
         let url = format!(
             "{}/api/v1/{}/{}/{}/{}?overwrite={}",
@@ -118,6 +142,11 @@ where
         }
     }
 
+    /// To get the properties of the rule
+    /// 
+    /// # Arguments
+    /// * `rule_name` - String slice that holds rule name
+    /// 
     pub fn get(&self, rule_name: &str) -> Result<Rule, String> {
         let url = format!(
             "{}/api/v1/{}/{}/{}/{}",
@@ -146,6 +175,11 @@ where
         }
     }
 
+    /// Deletes an already existing rule
+    /// 
+    /// # Arguments
+    /// * `rule_name` - String slice that holds rule name
+    /// 
     pub fn delete(&self, rule_name: &str) -> Result<Rule, String> {
         let url = format!(
             "{}/api/v1/{}/{}/{}/{}",
@@ -174,6 +208,12 @@ where
         }
     }
 
+    /// Sets the state of the rule
+    /// 
+    /// # Arguments
+    /// * `rule_name` - String slice that holds rule name
+    /// * 'state' - Execution state of the rule    
+    /// 
     pub fn setstate(&self, rule_name: &str, state: &str) -> Result<Rule, String> {
         let state = state.to_lowercase();
 
