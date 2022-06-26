@@ -85,7 +85,7 @@ where
 
         let request = self
             .client
-            .new_request(HttpMethods::GET, url.as_str(), Some((user, pass)), None)
+            .new_request(Some(HttpMethods::GET), url.as_str(), Some((user, pass)), None)
             .unwrap();
 
         match self.client.invoke_request(request) {
@@ -126,7 +126,7 @@ where
         let request = self
             .client
             .new_request(
-                HttpMethods::PUT,
+                Some(HttpMethods::PUT),
                 url.as_str(),
                 Some((user, pass)),
                 Some(body),
@@ -163,7 +163,7 @@ where
 
         let request = self
             .client
-            .new_request(HttpMethods::PUT, url.as_str(), Some((user, pass)), None)
+            .new_request(Some(HttpMethods::PUT), url.as_str(), Some((user, pass)), None)
             .unwrap();
 
         match self.client.invoke_request(request) {
@@ -196,7 +196,7 @@ where
 
         let request = self
             .client
-            .new_request(HttpMethods::PUT, url.as_str(), Some((user, pass)), None)
+            .new_request(Some(HttpMethods::PUT), url.as_str(), Some((user, pass)), None)
             .unwrap();
 
         match self.client.invoke_request(request) {
@@ -243,7 +243,7 @@ where
             let request = self
                 .client
                 .new_request(
-                    HttpMethods::POST,
+                    Some(HttpMethods::POST),
                     url.as_str(),
                     Some((user, pass)),
                     Some(body),

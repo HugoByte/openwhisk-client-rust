@@ -26,7 +26,7 @@ where
 
         let request = self
             .client
-            .new_request(HttpMethods::GET, url.as_str(), Some((user, pass)), None)
+            .new_request(Some(HttpMethods::GET), url.as_str(), Some((user, pass)), None)
             .unwrap();
 
         match self.client.invoke_request(request) {

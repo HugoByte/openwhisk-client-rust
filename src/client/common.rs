@@ -8,14 +8,14 @@ use http::StatusCode;
 use reqwest::blocking::Client;
 use serde_json::Value;
 
-/// Representation  of OpenWhisk Properties 
+/// Representation  of OpenWhisk Properties
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct WskProperties {
     /// Auth_token - `:` seperated username and passeord
     pub auth_token: String,
     /// Api Host to interact with Openwhisk API
     pub host: String,
-    /// Version 
+    /// Version
     #[serde(default = "default")]
     pub version: String,
     /// Toggle to set secure or insecure connection
@@ -51,29 +51,27 @@ pub struct Context {
     version: String,
 }
 
-
 impl WskProperties {
-
-    /// New Creates Openwhisk properties 
-    /// 
-    /// # Arguments 
+    /// New Creates Openwhisk properties
+    ///
+    /// # Arguments
     /// * `auth_token`  - The authorization token
     /// * `host`        - The API url
     /// * `insecure`    - Toggle for secure connection
     /// * `namespace`   - Name of the namespace
-    /// 
+    ///
     /// # Example
-    /// 
+    ///
     /// ```
     /// use openwhisk_rust::WskProperties;
-    /// 
+    ///
     /// let new_wsk_property = WskProperties::new(
     /// "your:auth_token".to_string(),
     /// "host".to_string(),
-    /// true, 
+    /// true,
     /// "namespace".to_string()
     /// );
-    /// 
+    ///
     /// ```
     pub fn new(auth_token: String, host: String, insecure: bool, namespace: String) -> Self {
         Self {
@@ -86,27 +84,27 @@ impl WskProperties {
         }
     }
 
-    /// To set Verbose, Version and Debug 
-    /// 
-    /// # Arguments 
+    /// To set Verbose, Version and Debug
+    ///
+    /// # Arguments
     /// * `debug`   - Bool to toggle debug
     /// * `verbose` - Bool to toggle verbose
     /// * `version` - Version of wsk properties
-    /// 
+    ///
     /// # Example
-    /// 
+    ///
     /// ```
     /// use openwhisk_rust::WskProperties;
-    /// 
+    ///
     /// let new_wsk_property = WskProperties::new(
     /// "your:auth_token".to_string(),
     /// "host".to_string(),
-    /// true, 
+    /// true,
     /// "namespace".to_string()
     /// );
-    /// 
+    ///
     /// new_wsk_property.set_verbose_debug_version(false,false,"v2".to_string());
-    /// 
+    ///
     /// ```
     pub fn set_verbose_debug_version(&self, debug: bool, verbose: bool, version: String) -> Self {
         Self {
@@ -121,7 +119,6 @@ impl WskProperties {
     }
 }
 
-
 /// Trait Openwhisk
 pub trait OpenWhisk {
     type Output;
@@ -131,7 +128,7 @@ pub trait OpenWhisk {
 
 impl Context {
     /// Creates and retruns context based on the Whisk Properties supplied
-    /// 
+    ///
     /// # Arguments
     /// * `wskprops` - Option of WhiskProperties
     pub fn new(wskprops: Option<&WskProperties>) -> Context {
@@ -210,7 +207,7 @@ impl OpenWhisk for NativeClient {
     /// NativeClient - Http Client (Here client is Reqwest Client)
     type Output = NativeClient;
     /// Creates New WhiskClient
-    /// 
+    ///
     /// # Arguments
     /// * `insecure` - Option of Bool to specify connection type
     fn new_whisk_client(insecure: Option<bool>) -> Self::Output {
@@ -240,16 +237,16 @@ impl Service for NativeClient {
 
     ///
     /// Creates New Request and Returns  `reqwest::blocking::RequestBuilder`
-    /// 
+    ///
     /// # Arguments
     /// * `method`   - Enum of HTTPMethods
     /// * `url`      - API Host url
     /// * `use_auth` - Option of tuple conatining Username and Password
     /// * `body`     - Option of value which can have parameters necessary for the body of request
-    /// 
+    ///
     fn new_request(
         &self,
-        method: HttpMethods,
+        method: Option<HttpMethods>,
         url: &str,
         use_auth: Option<(&str, &str)>,
         body: Option<Value>,
@@ -262,38 +259,44 @@ impl Service for NativeClient {
                 let pass = auth.1;
 
                 match method {
-                    HttpMethods::GET => return Ok(self.0.get(url).basic_auth(user, Some(pass))),
-                    HttpMethods::POST => {
-                        return Ok(self.0.post(url).basic_auth(user, Some(pass)).json(&body))
-                    }
-                    HttpMethods::PUT => {
-                        return Ok(self.0.put(url).basic_auth(user, Some(pass)).json(&body))
-                    }
-                    HttpMethods::DELETE => {
-                        return Ok(self.0.delete(url).basic_auth(user, Some(pass)).json(&body))
-                    }
-                    _ => Err(format!("Falied to create request")),
+                    Some(http_method) => match http_method {
+                        HttpMethods::GET => {
+                            return Ok(self.0.get(url).basic_auth(user, Some(pass)))
+                        }
+                        HttpMethods::POST => {
+                            return Ok(self.0.post(url).basic_auth(user, Some(pass)).json(&body))
+                        }
+                        HttpMethods::PUT => {
+                            return Ok(self.0.put(url).basic_auth(user, Some(pass)).json(&body))
+                        }
+                        HttpMethods::DELETE => {
+                            return Ok(self.0.delete(url).basic_auth(user, Some(pass)).json(&body))
+                        }
+                    },
+                    None => Err(format!("Falied to create request")),
                 }
             }
             None => match method {
-                HttpMethods::GET => return Ok(self.0.get(url)),
-                HttpMethods::POST => return Ok(self.0.post(url).json(&body)),
-                HttpMethods::PUT => return Ok(self.0.put(url).json(&body)),
-                HttpMethods::DELETE => return Ok(self.0.delete(url).json(&body)),
-                _ => Err(format!("Falied to create request")),
+                Some(http_method) => match http_method {
+                    HttpMethods::GET => return Ok(self.0.get(url)),
+                    HttpMethods::POST => return Ok(self.0.post(url).json(&body)),
+                    HttpMethods::PUT => return Ok(self.0.put(url).json(&body)),
+                    HttpMethods::DELETE => return Ok(self.0.delete(url).json(&body)),
+                },
+                None => Err(format!("Falied to create request")),
             },
         }
     }
 
     ///
     /// To invoke request and get response out of request execution
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// * `request` - Http request with url,auth and body
-    /// 
-    /// 
-    /// 
+    ///
+    ///
+    ///
     fn invoke_request(&self, request: Self::Output) -> Result<Value, String> {
         if let Ok(response) = request.send() {
             return match response.status() {
@@ -314,5 +317,3 @@ impl Clone for NativeClient {
         NativeClient(self.0.clone());
     }
 }
-
-

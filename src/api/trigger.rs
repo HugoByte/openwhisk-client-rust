@@ -78,7 +78,7 @@ where
 
         let request = self
             .client
-            .new_request(HttpMethods::GET, url.as_str(), Some((user, pass)), None)
+            .new_request(Some(HttpMethods::GET), url.as_str(), Some((user, pass)), None)
             .unwrap();
 
         match self.client.invoke_request(request) {
@@ -118,7 +118,7 @@ where
         };
 
         let request = match self.client.new_request(
-            HttpMethods::PUT,
+            Some(HttpMethods::PUT),
             url.as_str(),
             Some((user, pass)),
             Some(body),
@@ -160,7 +160,7 @@ where
         let request =
             match self
                 .client
-                .new_request(HttpMethods::GET, url.as_str(), Some((user, pass)), None)
+                .new_request(Some(HttpMethods::GET), url.as_str(), Some((user, pass)), None)
             {
                 Ok(request) => request,
                 Err(err) => return Err(format!("falied to create request {}", err)),
@@ -195,7 +195,7 @@ where
         let pass = user_auth.1;
 
         let request = match self.client.new_request(
-            HttpMethods::DELETE,
+            Some(HttpMethods::DELETE),
             url.as_str(),
             Some((user, pass)),
             None,
@@ -236,7 +236,7 @@ where
         let pass = user_auth.1;
 
         let request = match self.client.new_request(
-            HttpMethods::POST,
+            Some(HttpMethods::POST),
             url.as_str(),
             Some((user, pass)),
             Some(payload),
