@@ -6,7 +6,7 @@ pub trait Service {
     type Output;
     fn new_request(
         &self,
-        method: HttpMethods,
+        method: Option<HttpMethods>,
         url: &str,
         user_auth: Option<(&str, &str)>,
         body: Option<Value>,
