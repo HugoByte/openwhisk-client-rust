@@ -1,13 +1,18 @@
 use derive_new::new;
 use serde::{Deserialize, Serialize};
-use std::env;
 use std::fmt::Debug;
+use std::{env, fmt::Error as OtherError};
 
 use crate::api::{HttpMethods, Service};
 use http::StatusCode;
 use reqwest::blocking::Client;
 use serde_json::Value;
 
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+struct Error {
+    code: String,
+    error: String,
+}
 /// Representation  of OpenWhisk Properties
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct WskProperties {
@@ -298,13 +303,21 @@ impl Service for NativeClient {
     ///
     ///
     fn invoke_request(&self, request: Self::Output) -> Result<Value, String> {
-        if let Ok(response) = request.send() {
-            return match response.status() {
+        match request.send() {
+            Ok(response) => match response.status().clone() {
                 StatusCode::OK => Ok(response.json().unwrap()),
-                _ => Err(format!("failed to invoke request {}", response.status())),
-            };
-        };
-        Err(format!("failed to invoke request"))
+                _ => {
+                    let code = response.status();
+                    let error: Error = response.json().unwrap();
+
+                    Err(format!(
+                        ": Error -> [ Status :{}, Message : {} ]",
+                        code, error.error
+                    ))
+                }
+            },
+            Err(error) => Err(format!("{}", error)),
+        }
     }
 }
 
