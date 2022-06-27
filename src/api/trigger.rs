@@ -1,12 +1,12 @@
-use super::{HttpMethods, Limits, Service, TRIGGERS_ENDPOINT};
-use crate::client::Context; 
 use super::NAMESPACE_ENDPOINT;
+use super::{HttpMethods, Limits, Service, TRIGGERS_ENDPOINT};
+use crate::client::Context;
 use derive_new::new;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 /// Representation of Trigger Service
-#[derive(new,Default, Debug, Clone)]
+#[derive(new, Default, Debug, Clone)]
 pub struct TriggerService<T> {
     /// A trigger service must have a client to handle http request
     client: T,
@@ -14,23 +14,23 @@ pub struct TriggerService<T> {
     context: Context,
 }
 
-/// Represenation of Trigger 
-#[derive(Debug, Deserialize, Serialize, Clone,Default)]
+/// Represenation of Trigger
+#[derive(Debug, Deserialize, Serialize, Clone, Default)]
 pub struct Trigger {
     /// The namespace name
-   #[serde(default)]
+    #[serde(default)]
     pub namespace: String,
     /// The trigger name
-   #[serde(default)]
+    #[serde(default)]
     pub name: String,
     /// Version
-   #[serde(default)]
+    #[serde(default)]
     pub version: String,
     /// Publish to true or flase
-   #[serde(default)]
+    #[serde(default)]
     pub publish: bool,
     /// Number of times the trigger has been updated
-   #[serde(default)]
+    #[serde(default)]
     pub updated: i64,
     /// Annotations used
     pub annotations: Vec<KeyValue>,
@@ -76,10 +76,17 @@ where
         let user = user_auth.0;
         let pass = user_auth.1;
 
-        let request = self
+        let request = match self
             .client
-            .new_request(Some(HttpMethods::GET), url.as_str(), Some((user, pass)), None)
-            .unwrap();
+            .new_request(
+                Some(HttpMethods::GET),
+                url.as_str(),
+                Some((user, pass)),
+                None,
+            ){
+                Ok(request) => request,
+                Err(error) => return Err(format!("{}", error)),
+            };
 
         match self.client.invoke_request(request) {
             Ok(value) => match serde_json::from_value(value) {
@@ -92,11 +99,11 @@ where
     }
 
     /// Inserts a trigger
-    /// 
+    ///
     /// # Arguments
     /// * `trigger` - The trigger ro be inserted
-    /// * `overwrite`  - Toggle to get overwrtite an existing trigger 
-    /// 
+    /// * `overwrite`  - Toggle to get overwrtite an existing trigger
+    ///
     pub fn insert(&self, trigger: &Trigger, overwrite: bool) -> Result<Trigger, String> {
         let url = format!(
             "{}/api/v1/{}/{}/{}/{}?overwrite={}",
@@ -139,10 +146,10 @@ where
     }
 
     /// To get the properties of the trigger
-    /// 
+    ///
     /// # Arguments
     /// * `trigger_name` - String slice that holds trigger name
-    /// 
+    ///
     pub fn get(&self, trigger_name: &str) -> Result<Trigger, String> {
         let url = format!(
             "{}/api/v1/{}/{}/{}/{}",
@@ -157,14 +164,15 @@ where
         let user = user_auth.0;
         let pass = user_auth.1;
 
-        let request =
-            match self
-                .client
-                .new_request(Some(HttpMethods::GET), url.as_str(), Some((user, pass)), None)
-            {
-                Ok(request) => request,
-                Err(err) => return Err(format!("falied to create request {}", err)),
-            };
+        let request = match self.client.new_request(
+            Some(HttpMethods::GET),
+            url.as_str(),
+            Some((user, pass)),
+            None,
+        ) {
+            Ok(request) => request,
+            Err(err) => return Err(format!("{}", err)),
+        };
 
         let trigger: Trigger = match self.client.invoke_request(request) {
             Ok(response) => match serde_json::from_value(response) {
@@ -180,7 +188,7 @@ where
     /// Deletes an already existing trigger
     /// # Arguments
     /// * `trigger_name` - String slice that holds trigger name
-    /// 
+    ///
     pub fn delete(&self, trigger_name: &str) -> Result<Trigger, String> {
         let url = format!(
             "{}/api/v1/{}/{}/{}/{}",
@@ -201,7 +209,7 @@ where
             None,
         ) {
             Ok(request) => request,
-            Err(err) => return Err(format!("falied to create request {}", err)),
+            Err(err) => return Err(format!("{}", err)),
         };
 
         let trigger: Trigger = match self.client.invoke_request(request) {
@@ -216,11 +224,11 @@ where
     }
 
     /// Fires a trigger to an action
-    /// 
+    ///
     ///  # Arguments
     /// * `trigger_name` - String slice that holds trigger name
     /// * `payload` - payload is the result of the action
-    /// 
+    ///
     pub fn fire(&self, trigger_name: &str, payload: Value) -> Result<Trigger, String> {
         let url = format!(
             "{}/api/v1/{}/{}/{}/{}",
@@ -242,7 +250,7 @@ where
             Some(payload),
         ) {
             Ok(request) => request,
-            Err(err) => return Err(format!("falied to create request {}", err)),
+            Err(err) => return Err(format!("{}", err)),
         };
 
         let trigger: Trigger = match self.client.invoke_request(request) {

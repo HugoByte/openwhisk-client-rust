@@ -239,7 +239,7 @@ impl Service for NativeClient {
     /// Creates New Request and Returns  `reqwest::blocking::RequestBuilder`
     ///
     /// # Arguments
-    /// * `method`   - Enum of HTTPMethods
+    /// * `method`   - Option of HTTPMethods
     /// * `url`      - API Host url
     /// * `use_auth` - Option of tuple conatining Username and Password
     /// * `body`     - Option of value which can have parameters necessary for the body of request
