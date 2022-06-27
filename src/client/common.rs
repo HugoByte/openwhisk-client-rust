@@ -1,7 +1,6 @@
-use derive_new::new;
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
-use std::{env, fmt::Error as OtherError};
+use std::env;
 
 use crate::api::{HttpMethods, Service};
 use http::StatusCode;
@@ -310,10 +309,7 @@ impl Service for NativeClient {
                     let code = response.status();
                     let error: Error = response.json().unwrap();
 
-                    Err(format!(
-                        ": Error -> [ Status :{}, Message : {} ]",
-                        code, error.error
-                    ))
+                    Err(whisk_errors(code, error.error))
                 }
             },
             Err(error) => Err(format!("{}", error)),
@@ -329,4 +325,13 @@ impl Clone for NativeClient {
     fn clone_from(&mut self, _source: &Self) {
         NativeClient(self.0.clone());
     }
+}
+
+fn whisk_errors(code: StatusCode, message: String) -> String{
+
+    format!(
+        ": Error -> [ Status :{}, Message : {} ]",
+        code, message
+    )
+
 }
