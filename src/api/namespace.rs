@@ -39,7 +39,10 @@ where
                 Ok(namespaces) => Ok(namespaces),
                 Err(err) => Err(format!("Failed to deserailize {}", err)),
             },
-            Err(x) => Err(format!("Failed to fetch the list of available namespaces {}", x)),
+            Err(x) => Err(format!(
+                "Failed to fetch the list of available namespaces {}",
+                x
+            )),
         }
     }
 }

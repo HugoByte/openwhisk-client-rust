@@ -84,17 +84,15 @@ where
         let user = auth.0;
         let pass = auth.1;
 
-        let request = match self
-            .client
-            .new_request(
-                Some(HttpMethods::GET),
-                url.as_str(),
-                Some((user, pass)),
-                None,
-            ){
-                Ok(request) => request,
-                Err(error) => return Err(format!("{}", error)),
-            };
+        let request = match self.client.new_request(
+            Some(HttpMethods::GET),
+            url.as_str(),
+            Some((user, pass)),
+            None,
+        ) {
+            Ok(request) => request,
+            Err(error) => return Err(format!("{}", error)),
+        };
 
         match self.client.invoke_request(request) {
             Ok(x) => match serde_json::from_value(x) {
@@ -131,17 +129,15 @@ where
             Err(error) => return Err(format!("Failed deserailize body {}", error)),
         };
 
-        let request = match self
-            .client
-            .new_request(
-                Some(HttpMethods::PUT),
-                url.as_str(),
-                Some((user, pass)),
-                Some(body),
-            ){
-                Ok(request) => request,
-                Err(error) => return Err(format!("{}", error)),
-            };
+        let request = match self.client.new_request(
+            Some(HttpMethods::PUT),
+            url.as_str(),
+            Some((user, pass)),
+            Some(body),
+        ) {
+            Ok(request) => request,
+            Err(error) => return Err(format!("{}", error)),
+        };
 
         match self.client.invoke_request(request) {
             Ok(x) => match serde_json::from_value(x) {
@@ -171,17 +167,15 @@ where
         let user = auth.0;
         let pass = auth.1;
 
-        let request = match self
-            .client
-            .new_request(
-                Some(HttpMethods::PUT),
-                url.as_str(),
-                Some((user, pass)),
-                None,
-            ){
-                Ok(request) => request,
-                Err(error) => return Err(format!("{}", error)),
-            };
+        let request = match self.client.new_request(
+            Some(HttpMethods::PUT),
+            url.as_str(),
+            Some((user, pass)),
+            None,
+        ) {
+            Ok(request) => request,
+            Err(error) => return Err(format!("{}", error)),
+        };
 
         match self.client.invoke_request(request) {
             Ok(x) => match serde_json::from_value(x) {
@@ -211,17 +205,15 @@ where
         let user = auth.0;
         let pass = auth.1;
 
-        let request = match self
-            .client
-            .new_request(
-                Some(HttpMethods::PUT),
-                url.as_str(),
-                Some((user, pass)),
-                None,
-            ){
-                Ok(request) => request,
-                Err(error) => return Err(format!("{}", error)),
-            };
+        let request = match self.client.new_request(
+            Some(HttpMethods::PUT),
+            url.as_str(),
+            Some((user, pass)),
+            None,
+        ) {
+            Ok(request) => request,
+            Err(error) => return Err(format!("{}", error)),
+        };
 
         match self.client.invoke_request(request) {
             Ok(x) => match serde_json::from_value(x) {
@@ -264,17 +256,15 @@ where
                 Err(error) => return Err(format!("Failed deserailize body {}", error)),
             };
 
-            let request = match self
-                .client
-                .new_request(
-                    Some(HttpMethods::POST),
-                    url.as_str(),
-                    Some((user, pass)),
-                    Some(body),
-                ){
-                    Ok(request) => request,
-                    Err(error) => return Err(format!("{}", error)),
-                };
+            let request = match self.client.new_request(
+                Some(HttpMethods::POST),
+                url.as_str(),
+                Some((user, pass)),
+                Some(body),
+            ) {
+                Ok(request) => request,
+                Err(error) => return Err(format!("{}", error)),
+            };
 
             match self.client.invoke_request(request) {
                 Ok(x) => match serde_json::from_value(x) {

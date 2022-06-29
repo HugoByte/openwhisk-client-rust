@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
-use std::fmt::Debug;
 use std::env;
+use std::fmt::Debug;
 
 use crate::api::{HttpMethods, Service};
 use http::StatusCode;
@@ -327,11 +327,6 @@ impl Clone for NativeClient {
     }
 }
 
-fn whisk_errors(code: StatusCode, message: String) -> String{
-
-    format!(
-        ": Error -> [ Status :{}, Message : {} ]",
-        code, message
-    )
-
+fn whisk_errors(code: StatusCode, message: String) -> String {
+    format!(": Error -> [ Status :{}, Message : {} ]", code, message)
 }

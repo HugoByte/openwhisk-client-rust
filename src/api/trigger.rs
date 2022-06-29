@@ -76,17 +76,15 @@ where
         let user = user_auth.0;
         let pass = user_auth.1;
 
-        let request = match self
-            .client
-            .new_request(
-                Some(HttpMethods::GET),
-                url.as_str(),
-                Some((user, pass)),
-                None,
-            ){
-                Ok(request) => request,
-                Err(error) => return Err(format!("{}", error)),
-            };
+        let request = match self.client.new_request(
+            Some(HttpMethods::GET),
+            url.as_str(),
+            Some((user, pass)),
+            None,
+        ) {
+            Ok(request) => request,
+            Err(error) => return Err(format!("{}", error)),
+        };
 
         match self.client.invoke_request(request) {
             Ok(value) => match serde_json::from_value(value) {
