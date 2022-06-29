@@ -1,6 +1,6 @@
 [package]
 name = "openwhisk-rust"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["HugoByte <hello@hugobyte.com>"]
 repository = "https://github.com/hugobyte/openwhisk-client-rust"
 license = "Apache-2.0"
@@ -21,6 +21,6 @@ serde_derive = "1.0.136"
 chesterfield = "0.0.1"
 reqwest = { version = "0.11.10", features = ["blocking", "json", "native-tls"] }
 derive-new = "0.5.9"
-http = "0.2.6"
+http = "0.2.8"
 base64 = "0.13.0"
 
