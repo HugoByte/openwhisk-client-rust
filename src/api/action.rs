@@ -104,7 +104,7 @@ where
             Ok(request) => request,
             Err(error) => return Err(format!("{}", error)),
         };
-
+        
         match self.client.invoke_request(request) {
             Ok(x) => {
                 let actions: Result<Vec<Action>, Error> = serde_json::from_value(x);

@@ -16,12 +16,11 @@ exclude = [
 
 [dependencies]
 serde_json = "1.0.79"
-serde = "1.0.136"
-serde_derive = "1.0.136"
-chesterfield = "0.0.1"
+serde = { version = "1.0.137", features = ["derive"]}
+serde_derive = "1.0.137"
 reqwest = { version = "0.11.10", features = ["blocking", "json", "native-tls"] }
 derive-new = "0.5.9"
 http = "0.2.8"
 base64 = "0.13.0"
-wasi-experimental-http = "0.10.0"
+wasi-experimental-http = "0.9.0"
 bytes = "1"
