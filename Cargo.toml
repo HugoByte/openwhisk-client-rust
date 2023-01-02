@@ -1,12 +1,12 @@
 [package]
 name = "openwhisk-rust"
-version = "0.1.2"
+version = "0.1.3"
 authors = ["HugoByte <hello@hugobyte.com>"]
 repository = "https://github.com/hugobyte/openwhisk-client-rust"
 license = "Apache-2.0"
 edition = "2018"
-description = "A rust client for OpenWhisk"
-documentation = "https://docs.rs/openwhisk-rust/0.1.1/openwhisk_rust/"
+description = "OpenWhisk Client written in Rust"
+documentation = "https://docs.rs/openwhisk-rust/latest/openwhisk_rust/"
 readme = "readme.md"
 
 exclude = [
