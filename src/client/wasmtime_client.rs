@@ -162,7 +162,7 @@ impl Service for WasmClient {
                     Err(whisk_errors(code, s.to_string()))
                 }
             },
-            Err(error) => Err(format!("{}", error)),
+            Err(error) => Err(error.to_string()),
         }
     }
 }

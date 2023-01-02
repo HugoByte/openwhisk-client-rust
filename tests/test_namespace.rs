@@ -1,4 +1,4 @@
-use openwhisk_rust::{Action, Exec, KeyValue, OpenwhiskClient, WskProperties,NativeClient};
+use openwhisk_rust::{ OpenwhiskClient, WskProperties,NativeClient};
 
 #[test]
 fn test_list_namespaces_native_client() {

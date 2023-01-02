@@ -1,4 +1,4 @@
-use openwhisk_rust::{Action, Exec, KeyValue, OpenwhiskClient, WskProperties,NativeClient, Rule, Trigger};
+use openwhisk_rust::{ OpenwhiskClient, WskProperties,NativeClient, Rule, Trigger};
 
 #[test]
 fn test_list_rules_native_client() {

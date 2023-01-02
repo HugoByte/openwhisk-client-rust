@@ -1,5 +1,4 @@
-use openwhisk_rust::{
-    Action, Exec, KeyValue, NativeClient, OpenwhiskClient, Trigger, WskProperties,
+use openwhisk_rust::{ KeyValue, NativeClient, OpenwhiskClient, Trigger, WskProperties,
 };
 
 #[test]
