@@ -21,9 +21,9 @@ impl OpenWhisk for WasmClient {
             },
             None => todo!(),
         };
-        return WasmClient {
+        WasmClient {
             headers: header_map,
-        };
+        }
     }
 }
 
@@ -95,7 +95,7 @@ impl Service for WasmClient {
                             }
                         }
                     },
-                    None => Err(format!("Falied to create request")),
+                    None => Err("Falied to create request".to_string()),
                 }
             }
             None => match method {
@@ -129,7 +129,7 @@ impl Service for WasmClient {
                         }
                     }
                 },
-                None => Err(format!("Falied to create request")),
+                None => Err("Falied to create request".to_string()),
             },
         }
     }
@@ -138,19 +138,17 @@ impl Service for WasmClient {
         match wasi_request(request) {
             Ok(mut response) => match response.status_code {
                 StatusCode::OK => match response.body_read_all() {
-                    Ok(response) => {
-                        match String::from_utf8(response) {
-                            Ok(response) => {
-                                let response_to_value: Result<Value, Error> =
-                                    serde_json::from_str(&response);
-                                match response_to_value {
-                                    Ok(value) => return Ok(value),
-                                    Err(error) => return Err(format!("{}", error)),
-                                }
+                    Ok(response) => match String::from_utf8(response) {
+                        Ok(response) => {
+                            let response_to_value: Result<Value, Error> =
+                                serde_json::from_str(&response);
+                            match response_to_value {
+                                Ok(value) => Ok(value),
+                                Err(error) => Err(error.to_string()),
                             }
-                            Err(error) => return Err(format!("{}", error)),
-                        };
-                    }
+                        }
+                        Err(error) => Err(error.to_string()),
+                    },
                     Err(error) => return Err(format!("{}", error)),
                 },
                 _ => {

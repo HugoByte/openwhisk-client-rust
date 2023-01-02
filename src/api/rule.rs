@@ -15,7 +15,7 @@ pub struct RuleService<T> {
 }
 
 /// Representation of Rule
-#[derive(new, Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Rule {
     /// A rule must have a namspace where it exists
     #[serde(default)]
@@ -91,7 +91,7 @@ where
             None,
         ) {
             Ok(request) => request,
-            Err(error) => return Err(format!("{}", error)),
+            Err(error) => return Err(error),
         };
 
         match self.client.invoke_request(request) {
@@ -136,7 +136,7 @@ where
             Some(body),
         ) {
             Ok(request) => request,
-            Err(error) => return Err(format!("{}", error)),
+            Err(error) => return Err(error),
         };
 
         match self.client.invoke_request(request) {
@@ -174,7 +174,7 @@ where
             None,
         ) {
             Ok(request) => request,
-            Err(error) => return Err(format!("{}", error)),
+            Err(error) => return Err(error),
         };
 
         match self.client.invoke_request(request) {
@@ -212,7 +212,7 @@ where
             None,
         ) {
             Ok(request) => request,
-            Err(error) => return Err(format!("{}", error)),
+            Err(error) => return Err(error),
         };
 
         match self.client.invoke_request(request) {
@@ -234,7 +234,7 @@ where
         let state = state.to_lowercase();
 
         if state != "active" && state != "inactive" {
-            return Err(format!("Invalid setstate options"));
+            Err("Invalid setstate options".to_string())
         } else {
             let url = format!(
                 "{}/api/v1/{}/{}/{}/{}",
@@ -263,7 +263,7 @@ where
                 Some(body),
             ) {
                 Ok(request) => request,
-                Err(error) => return Err(format!("{}", error)),
+                Err(error) => return Err(error),
             };
 
             match self.client.invoke_request(request) {

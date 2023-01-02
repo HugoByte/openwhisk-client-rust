@@ -31,7 +31,7 @@ where
             None,
         ) {
             Ok(request) => request,
-            Err(error) => return Err(format!("{}", error)),
+            Err(error) => return Err(error),
         };
 
         match self.client.invoke_request(request) {

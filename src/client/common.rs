@@ -1,7 +1,7 @@
+use http::StatusCode;
 use serde::{Deserialize, Serialize};
 use std::env;
 use std::fmt::Debug;
-use http::StatusCode;
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct WhiskError {
@@ -111,7 +111,7 @@ impl WskProperties {
             auth_token: self.auth_token.clone(),
             host: self.host.clone(),
             version,
-            insecure: self.insecure.clone(),
+            insecure: self.insecure,
             namespace: self.namespace.clone(),
             verbose,
             debug,
@@ -140,7 +140,7 @@ impl Context {
                 None => "test:test".to_string(),
             }
         };
-        let auth: Vec<&str> = api_key.split(":").collect();
+        let auth: Vec<&str> = api_key.split(':').collect();
         let host = if env::var("__OW_API_HOST").is_ok() {
             env::var("__OW_API_HOST").unwrap()
         } else {
@@ -159,7 +159,7 @@ impl Context {
         };
 
         let connectiontype = match wskprops {
-            Some(config) => config.insecure.clone(),
+            Some(config) => config.insecure,
             None => false,
         };
 
@@ -198,7 +198,6 @@ impl Context {
         &self.host
     }
 }
-
 
 pub fn whisk_errors(code: StatusCode, message: String) -> String {
     format!(": Error -> [ Status :{}, Message : {} ]", code, message)

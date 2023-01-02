@@ -1,9 +1,8 @@
+use super::common::{whisk_errors, OpenWhisk, WhiskError};
+use crate::api::{HttpMethods, Service};
+use http::StatusCode;
 use reqwest::blocking::Client;
 use serde_json::Value;
-use crate::api::{HttpMethods, Service};
-use super::common::{OpenWhisk,WhiskError,whisk_errors};
-use http::StatusCode;
-
 
 /// A Client to make Requests with.
 #[derive(Debug, Default)]
@@ -57,7 +56,7 @@ impl Service for NativeClient {
         use_auth: Option<(&str, &str)>,
         body: Option<Value>,
     ) -> Result<Self::Output, String> {
-        let body = body.unwrap_or(serde_json::json!({}));
+        let body = body.unwrap_or_else(|| serde_json::json!({}));
 
         match use_auth {
             Some(auth) => {
@@ -66,30 +65,28 @@ impl Service for NativeClient {
 
                 match method {
                     Some(http_method) => match http_method {
-                        HttpMethods::GET => {
-                            return Ok(self.0.get(url).basic_auth(user, Some(pass)))
-                        }
+                        HttpMethods::GET => Ok(self.0.get(url).basic_auth(user, Some(pass))),
                         HttpMethods::POST => {
-                            return Ok(self.0.post(url).basic_auth(user, Some(pass)).json(&body))
+                            Ok(self.0.post(url).basic_auth(user, Some(pass)).json(&body))
                         }
                         HttpMethods::PUT => {
-                            return Ok(self.0.put(url).basic_auth(user, Some(pass)).json(&body))
+                            Ok(self.0.put(url).basic_auth(user, Some(pass)).json(&body))
                         }
                         HttpMethods::DELETE => {
-                            return Ok(self.0.delete(url).basic_auth(user, Some(pass)).json(&body))
+                            Ok(self.0.delete(url).basic_auth(user, Some(pass)).json(&body))
                         }
                     },
-                    None => Err(format!("Falied to create request")),
+                    None => Err("Falied to create request".to_string()),
                 }
             }
             None => match method {
                 Some(http_method) => match http_method {
-                    HttpMethods::GET => return Ok(self.0.get(url)),
-                    HttpMethods::POST => return Ok(self.0.post(url).json(&body)),
-                    HttpMethods::PUT => return Ok(self.0.put(url).json(&body)),
-                    HttpMethods::DELETE => return Ok(self.0.delete(url).json(&body)),
+                    HttpMethods::GET => Ok(self.0.get(url)),
+                    HttpMethods::POST => Ok(self.0.post(url).json(&body)),
+                    HttpMethods::PUT => Ok(self.0.put(url).json(&body)),
+                    HttpMethods::DELETE => Ok(self.0.delete(url).json(&body)),
                 },
-                None => Err(format!("Falied to create request")),
+                None => Err("Falied to create request".to_string()),
             },
         }
     }
@@ -105,7 +102,7 @@ impl Service for NativeClient {
     ///
     fn invoke_request(&self, request: Self::Output) -> Result<Value, String> {
         match request.send() {
-            Ok(response) => match response.status().clone() {
+            Ok(response) => match response.status() {
                 StatusCode::OK => Ok(response.json().unwrap()),
                 _ => {
                     let code = response.status();
@@ -124,6 +121,7 @@ impl Clone for NativeClient {
         NativeClient(self.0.clone())
     }
 
+    #[allow(clippy::unnecessary_operation)]
     fn clone_from(&mut self, _source: &Self) {
         NativeClient(self.0.clone());
     }

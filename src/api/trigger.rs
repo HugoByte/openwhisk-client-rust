@@ -83,7 +83,7 @@ where
             None,
         ) {
             Ok(request) => request,
-            Err(error) => return Err(format!("{}", error)),
+            Err(error) => return Err(error),
         };
 
         match self.client.invoke_request(request) {
@@ -169,7 +169,7 @@ where
             None,
         ) {
             Ok(request) => request,
-            Err(err) => return Err(format!("{}", err)),
+            Err(err) => return Err(err),
         };
 
         let trigger: Trigger = match self.client.invoke_request(request) {
@@ -207,7 +207,7 @@ where
             None,
         ) {
             Ok(request) => request,
-            Err(err) => return Err(format!("{}", err)),
+            Err(err) => return Err(err),
         };
 
         let trigger: Trigger = match self.client.invoke_request(request) {
@@ -248,7 +248,7 @@ where
             Some(payload),
         ) {
             Ok(request) => request,
-            Err(err) => return Err(format!("{}", err)),
+            Err(err) => return Err(err),
         };
 
         let trigger: Trigger = match self.client.invoke_request(request) {

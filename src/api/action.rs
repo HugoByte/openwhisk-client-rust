@@ -102,9 +102,9 @@ where
             None,
         ) {
             Ok(request) => request,
-            Err(error) => return Err(format!("{}", error)),
+            Err(error) => return Err(error),
         };
-        
+
         match self.client.invoke_request(request) {
             Ok(x) => {
                 let actions: Result<Vec<Action>, Error> = serde_json::from_value(x);
@@ -120,7 +120,7 @@ where
                             result.push(actionlist)
                         }
 
-                        return Ok(result);
+                        Ok(result)
                     }
                     Err(error) => return Err(format!("Failed to deserailize actions {}", error)),
                 }
@@ -160,7 +160,7 @@ where
             None,
         ) {
             Ok(request) => request,
-            Err(error) => return Err(format!("{}", error)),
+            Err(error) => return Err(error),
         };
 
         match self.client.invoke_request(request) {
@@ -199,7 +199,7 @@ where
             None,
         ) {
             Ok(request) => request,
-            Err(error) => return Err(format!("{}", error)),
+            Err(error) => return Err(error),
         };
 
         match self.client.invoke_request(request) {
@@ -229,11 +229,11 @@ where
             overwrite,
         );
 
-        let user_auth = self.context.auth().clone();
+        let user_auth = self.context.auth();
         let user = user_auth.0;
         let pass = user_auth.1;
 
-        let body = serde_json::to_value(&action).unwrap();
+        let body = serde_json::to_value(action).unwrap();
 
         let request = match self.client.new_request(
             Some(HttpMethods::PUT),
@@ -242,7 +242,7 @@ where
             Some(body),
         ) {
             Ok(request) => request,
-            Err(error) => return Err(format!("{}", error)),
+            Err(error) => return Err(error),
         };
 
         match self.client.invoke_request(request) {
@@ -291,7 +291,7 @@ where
             Some(payload),
         ) {
             Ok(request) => request,
-            Err(error) => return Err(format!("{}", error)),
+            Err(error) => return Err(error),
         };
 
         match self.client.invoke_request(request) {
