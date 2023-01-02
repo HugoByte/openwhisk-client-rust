@@ -13,12 +13,14 @@ This Project requies latest verion of rust to be installed and configured.
 
 ## Configuration
 
+The parameters of API_HOST, NAMESPACE and AUTH_TOKEN will be used to access the OpenWhisk services.
+
 Configure your Openwhisk client by setting the whisk properties.
 
 ```
 let wsk_properties = WskProperties::new(
 			"<Openwhisk_Auth_Token>",
-			"<Openwhisk_API_Hosy>",
+			"<Openwhisk_API_Host>",
 			 <insecure(Bool: for secure or insecure connection )>,
 			 "<Namespace>"
  );
