@@ -39,6 +39,8 @@ fn test_create_trigger_native_client() {
             key: "fedd".to_string(),
             value: serde_json::json!("feed"),
         }],
+
+        version : "0.0.1".to_string(),
         ..Default::default()
     };
 

@@ -1,4 +1,5 @@
-use openwhisk_rust::{ OpenwhiskClient, WskProperties,NativeClient, Rule, Trigger};
+use openwhisk_rust::{ OpenwhiskClient, WskProperties,NativeClient, Trigger, Action, Rule};
+use serde_json::json;
 
 #[test]
 fn test_list_rules_native_client() {
@@ -14,6 +15,8 @@ fn test_list_rules_native_client() {
     let rules = serde_json::to_value(client.rules().list().unwrap()).unwrap();
     let expected: String = serde_json::to_string(&rules).unwrap();
 
+ 
+
     assert!(expected.contains(""));
 }
 
@@ -28,24 +31,13 @@ fn test_create_rule_native_clients() {
 
     let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
 
-    let rule = Rule {
-        name: "sample_rule".to_string(),
-        trigger: serde_json::to_value(Trigger {
-            name: "sample_trigger".to_string(),
-            ..Default::default()
-        })
-        .unwrap(),
-        action: serde_json::to_value(Rule {
-            name: "sample_rule".to_string(),
-            ..Default::default()
-        })
-        .unwrap(),
-        ..Default::default()
-    };
+    let rule = Rule  { name: "sample_rule4".to_string(), trigger: "trigger1".to_string(), action: "cartype".to_string() };
     let rule = serde_json::to_value(client.rules().insert(&rule, true).unwrap()).unwrap();
+
+    
     let expected: String = serde_json::to_string(&rule).unwrap();
 
-    assert!(expected.contains("sample_rule"));
+    assert!(expected.contains("sample_rule4"));
 }
 
 #[test]
@@ -59,8 +51,9 @@ fn test_get_rule_property_native_client() {
 
     let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
 
-    let rule = serde_json::to_value(client.rules().get("sample_rule").unwrap()).unwrap();
+    let rule = serde_json::to_value(client.rules().get("sample_rule2").unwrap()).unwrap();
+   
     let expected: String = serde_json::to_string(&rule).unwrap();
 
-    assert!(expected.contains("sample_trigger"));
+    assert!(expected.contains("sample_rule2"));
 }

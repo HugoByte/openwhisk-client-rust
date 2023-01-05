@@ -13,10 +13,30 @@ pub struct RuleService<T> {
     /// A rule service uses the context which sets openwhisk properties
     context: Context,
 }
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct Rule {
+    pub name: String,
+    pub trigger: String,
+    pub action: String,
+}
+
+impl Rule {
+    fn body(namespace: String, rule: &Rule) -> Result<Value, serde_json::Error> {
+        let trigger = format!("/{}/{}/", namespace, rule.trigger);
+
+        let action = format!("/{}/{}/", namespace, rule.action);
+
+        serde_json::to_value(Rule {
+            name: rule.name.clone(),
+            trigger,
+            action,
+        })
+    }
+}
 
 /// Representation of Rule
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
-pub struct Rule {
+pub struct RuleResponse {
     /// A rule must have a namspace where it exists
     #[serde(default)]
     pub namespace: String,
@@ -57,7 +77,7 @@ pub struct RuleListOptions {
     pub docs: bool,
 }
 
-impl Rule {
+impl RuleResponse {
     fn set_status(state: String) -> Self {
         Self {
             status: state,
@@ -71,7 +91,7 @@ where
     T: Service,
 {
     /// Returns a list of Rules
-    pub fn list(&self) -> Result<Vec<Rule>, String> {
+    pub fn list(&self) -> Result<Vec<RuleResponse>, String> {
         let url = format!(
             "{}/api/v1/{}/{}/{}",
             self.context.host(),
@@ -109,7 +129,7 @@ where
     /// * `rule` - The rule ro be inserted
     /// * `overwrite`  - Toggle to get overwrtite an existing rule
     ///  
-    pub fn insert(&self, rule: &Rule, overwrite: bool) -> Result<Rule, String> {
+    pub fn insert(&self, rule: &Rule, overwrite: bool) -> Result<RuleResponse, String> {
         let url = format!(
             "{}/api/v1/{}/{}/{}/{}?overwrite={}",
             self.context.host(),
@@ -124,7 +144,7 @@ where
         let user = auth.0;
         let pass = auth.1;
 
-        let body = match serde_json::to_value(rule) {
+        let body = match Rule::body(self.context.namespace().to_string(), rule) {
             Ok(body) => body,
             Err(error) => return Err(format!("Failed deserailize body {}", error)),
         };
@@ -153,7 +173,7 @@ where
     /// # Arguments
     /// * `rule_name` - String slice that holds rule name
     ///
-    pub fn get(&self, rule_name: &str) -> Result<Rule, String> {
+    pub fn get(&self, rule_name: &str) -> Result<RuleResponse, String> {
         let url = format!(
             "{}/api/v1/{}/{}/{}/{}",
             self.context.host(),
@@ -168,7 +188,7 @@ where
         let pass = auth.1;
 
         let request = match self.client.new_request(
-            Some(HttpMethods::PUT),
+            Some(HttpMethods::GET),
             url.as_str(),
             Some((user, pass)),
             None,
@@ -191,7 +211,7 @@ where
     /// # Arguments
     /// * `rule_name` - String slice that holds rule name
     ///
-    pub fn delete(&self, rule_name: &str) -> Result<Rule, String> {
+    pub fn delete(&self, rule_name: &str) -> Result<RuleResponse, String> {
         let url = format!(
             "{}/api/v1/{}/{}/{}/{}",
             self.context.host(),
@@ -230,7 +250,7 @@ where
     /// * `rule_name` - String slice that holds rule name
     /// * 'state' - Execution state of the rule    
     ///
-    pub fn setstate(&self, rule_name: &str, state: &str) -> Result<Rule, String> {
+    pub fn setstate(&self, rule_name: &str, state: &str) -> Result<RuleResponse, String> {
         let state = state.to_lowercase();
 
         if state != "active" && state != "inactive" {
@@ -249,7 +269,7 @@ where
             let user = auth.0;
             let pass = auth.1;
 
-            let setstate = Rule::set_status(state);
+            let setstate = RuleResponse::set_status(state);
 
             let body = match serde_json::to_value(setstate) {
                 Ok(body) => body,

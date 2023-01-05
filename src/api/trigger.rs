@@ -5,6 +5,10 @@ use derive_new::new;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
+fn default_0() -> String {
+    "0.0.1".to_string()
+}
+
 /// Representation of Trigger Service
 #[derive(new, Default, Debug, Clone)]
 pub struct TriggerService<T> {
@@ -24,7 +28,6 @@ pub struct Trigger {
     #[serde(default)]
     pub name: String,
     /// Version
-    #[serde(default)]
     pub version: String,
     /// Publish to true or flase
     #[serde(default)]
