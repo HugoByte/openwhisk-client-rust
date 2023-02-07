@@ -41,7 +41,7 @@ pub struct Trigger {
     #[serde(default)]
     pub parameters: Vec<KeyValue>,
     /// Trigger rate Limits  
-    #[serde(skip_deserializing)]
+    #[serde(default)]
     #[serde(skip_serializing)]
     pub limits: Limits,
 }

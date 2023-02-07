@@ -24,22 +24,21 @@ pub struct Action {
     #[serde(default)]
     pub name: String,
     /// A action must have a versioning
-    #[serde(skip_serializing)]
+    #[serde(default)]
     pub version: String,
     /// A action can take concurrrent limit
-    #[serde(skip_serializing)]
+    #[serde(default)]
     pub limits: Limits,
     /// A action must have Exec properties
     pub exec: Exec,
     /// A action must have error to handle error created
     #[serde(default)]
-    #[serde(skip_serializing)]
     pub error: String,
     /// Toggle to publish action
-    #[serde(skip_serializing)]
+    #[serde(default)]
     pub publish: bool,
     /// Updated version count of actions
-    #[serde(skip_serializing)]
+    #[serde(default)]
     pub updated: i64,
     /// Keyvalue pair for annotate Actions
     pub annotations: Vec<KeyValue>,
