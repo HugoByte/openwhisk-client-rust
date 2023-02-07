@@ -1,5 +1,4 @@
-use openwhisk_rust::{ KeyValue, NativeClient, OpenwhiskClient, Trigger, WskProperties,
-};
+use openwhisk_rust::{KeyValue, NativeClient, OpenwhiskClient, Trigger, WskProperties};
 
 #[test]
 fn test_list_triggers_native_client() {
@@ -40,7 +39,7 @@ fn test_create_trigger_native_client() {
             value: serde_json::json!("feed"),
         }],
 
-        version : "0.0.1".to_string(),
+        version: "0.0.1".to_string(),
         ..Default::default()
     };
 

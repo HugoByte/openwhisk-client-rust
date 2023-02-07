@@ -1,26 +1,25 @@
-use openwhisk_rust::{Action, Exec, KeyValue, NativeClient, OpenwhiskClient, WskProperties,Limits, ActionList};
+use openwhisk_rust::{
+    Action, ActionList, Exec, KeyValue, Limits, NativeClient, OpenwhiskClient, WskProperties,
+};
 use std::{fs, io::Read};
-use wiremock::{MockServer, Mock, ResponseTemplate, matchers::{method, path}};
+use wiremock::{
+    matchers::{method, path, query_param},
+    Mock, MockServer, ResponseTemplate,
+};
 
-
-async fn serever() -> MockServer{
+async fn serever() -> MockServer {
     let mock_server = MockServer::start().await;
-    
 
-    mock_server
-
-}
-
-#[async_std::test]
-async fn test_list_actions_native_client() {
-
-
-  let server = serever().await;
-     let action = Action {
+    let action = Action {
         namespace: "guest".to_string(),
         name: "cars".to_string(),
         version: "".to_string(),
-        limits: Default::default(),
+        limits: Limits {
+            timeout: 1,
+            memory: 2,
+            logsize: 3,
+            concurrency: 3,
+        },
         exec: Exec {
             kind: "rust:1.34".to_string(),
             code: "bas64_data".to_string(),
@@ -38,14 +37,46 @@ async fn test_list_actions_native_client() {
             value: serde_json::json!({}),
         }],
     };
-    let r  = vec![action];
-Mock::given(method("GET"))
-            .and(path("/api/v1/namespaces/guest/actions"))
-            .respond_with(ResponseTemplate::new(200).insert_header("Content-Type", "application/json").set_body_json(r))
-            // Mounting the mock on the mock server - it's now effective!
-            .mount(&server)
-            .await;
-     
+    let r = vec![action.clone()];
+    Mock::given(method("GET"))
+        .and(path("/api/v1/namespaces/guest/actions"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .insert_header("Content-Type", "application/json")
+                .set_body_json(r),
+        )
+        // Mounting the mock on the mock server - it's now effective!
+        .mount(&mock_server)
+        .await;
+
+    Mock::given(method("GET"))
+        .and(path("/api/v1/namespaces/guest/actions/cars"))
+        .and(query_param("code", "false"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .insert_header("Content-Type", "application/json")
+                .set_body_json(action.clone()),
+        )
+        .mount(&mock_server)
+        .await;
+
+    Mock::given(method("DELETE"))
+        .and(path("/api/v1/namespaces/guest/actions/cars"))
+        .and(query_param("code", "false"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .insert_header("Content-Type", "application/json")
+                .set_body_json(action.clone()),
+        )
+        .mount(&mock_server)
+        .await;
+
+    mock_server
+}
+
+#[async_std::test]
+async fn test_list_actions_native_client() {
+    let server = serever().await;
 
     let wsk_properties = WskProperties::new(
         "23bc46b1-71f6-4ed5-8c54-816aa4f8c502:123zO3xZCLrMN6v2BKK1dXYFpXlPkccOFqm12CdAsMgRU4VrNZ9lyGVCGuMDGIwP".to_string(),
@@ -56,21 +87,24 @@ Mock::given(method("GET"))
 
     let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
 
-   
-
     let result = serde_json::to_value(client.actions().list().unwrap()).unwrap();
 
-   
-    let actual = serde_json::to_value(vec![ActionList { name: "cars".to_string(), namespace: "guest".to_string() }]).unwrap();
+    let actual = serde_json::to_value(vec![ActionList {
+        name: "cars".to_string(),
+        namespace: "guest".to_string(),
+    }])
+    .unwrap();
 
-    assert_eq!(actual,result)
+    assert_eq!(actual, result)
 }
 
-#[test]
-fn test_get_action_property_native_client() {
+#[async_std::test]
+async fn test_get_action_property_native_client() {
+    let server = serever().await;
+
     let wsk_properties = WskProperties::new(
         "23bc46b1-71f6-4ed5-8c54-816aa4f8c502:123zO3xZCLrMN6v2BKK1dXYFpXlPkccOFqm12CdAsMgRU4VrNZ9lyGVCGuMDGIwP".to_string(),
-         "https://65.20.70.146:31001".to_string(), 
+         server.uri(), 
           true, 
          "guest".to_string(), 
     );
@@ -82,11 +116,12 @@ fn test_get_action_property_native_client() {
     assert!(expected.contains("cars"));
 }
 
-#[test]
-fn test_delete_action_native_client() {
+#[async_std::test]
+async fn test_delete_action_native_client() {
+    let server = serever().await;
     let wsk_properties = WskProperties::new(
         "23bc46b1-71f6-4ed5-8c54-816aa4f8c502:123zO3xZCLrMN6v2BKK1dXYFpXlPkccOFqm12CdAsMgRU4VrNZ9lyGVCGuMDGIwP".to_string(),
-         "https://65.20.70.146:31001".to_string(), 
+         server.uri(), 
          true,
          "guest".to_string(), 
     );
