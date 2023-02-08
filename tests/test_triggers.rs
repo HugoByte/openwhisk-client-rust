@@ -36,11 +36,11 @@ async fn test_create_trigger_native_client() {
         name: "trigger".to_string(),
 
         annotations: vec![KeyValue {
-            key: "fedd".to_string(),
+            key: "feed".to_string(),
             value: serde_json::json!("feed"),
         }],
         parameters: vec![KeyValue {
-            key: "fedd".to_string(),
+            key: "feed".to_string(),
             value: serde_json::json!("feed"),
         }],
 
