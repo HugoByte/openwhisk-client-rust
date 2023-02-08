@@ -1,7 +1,7 @@
 use openwhisk_rust::{KeyValue, NativeClient, OpenwhiskClient, Trigger, WskProperties};
 
 pub mod helper;
-use crate::helper::{put,get,delete};
+use crate::helper::{delete, get, put};
 
 #[async_std::test]
 async fn test_list_triggers_native_client() {
@@ -67,9 +67,9 @@ async fn test_delete_trigger_native_client() {
 
     let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
 
-   client.triggers().delete("trigger").unwrap();
-   let triggers = serde_json::to_value(client.triggers().list().unwrap()).unwrap();
+    client.triggers().delete("trigger").unwrap();
+    let triggers = serde_json::to_value(client.triggers().list().unwrap()).unwrap();
     let expected: Vec<Trigger> = serde_json::from_value(triggers).unwrap();
-    
+
     assert!(expected.is_empty())
 }

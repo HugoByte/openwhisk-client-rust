@@ -1,6 +1,4 @@
-use openwhisk_rust::{
-     NativeClient, OpenwhiskClient, Rule, RuleResponse, WskProperties,
-};
+use openwhisk_rust::{NativeClient, OpenwhiskClient, Rule, RuleResponse, WskProperties};
 pub mod helper;
 use crate::helper::{get, put};
 
