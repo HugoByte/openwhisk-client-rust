@@ -73,6 +73,12 @@ let wsk_properties = WskProperties::new(
 
 ```
 
+## Test
+
+```
+cargo test
+```
+
 ## Contributions
 
 Contributions welcome particularly for enhancement of this library and also adding new functionality which helps in seamless interaction with Openwhisk Apis in rust applications.
