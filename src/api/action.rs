@@ -15,7 +15,7 @@ pub struct ActionService<T> {
 }
 
 /// Represenation of Action
-#[derive(Debug, Default, Deserialize, Serialize, Clone, PartialEq)]
+#[derive(Debug, Default, Deserialize, Serialize, Clone, PartialEq, Eq)]
 pub struct Action {
     /// A action must have a namspace where it exists
     #[serde(default)]
@@ -45,7 +45,7 @@ pub struct Action {
 }
 
 /// Actions Execucatble properties
-#[derive(Debug, Default, Deserialize, Serialize, Clone, PartialEq)]
+#[derive(Debug, Default, Deserialize, Serialize, Clone, PartialEq, Eq)]
 pub struct Exec {
     /// Action's Kind
     #[serde(default)]
@@ -70,7 +70,7 @@ pub struct Exec {
     pub binary: bool,
 }
 
-#[derive(Debug, Default, Deserialize, Serialize, Clone, PartialEq)]
+#[derive(Debug, Default, Deserialize, Serialize, Clone, PartialEq, Eq)]
 pub struct ActionList {
     pub name: String,
     pub namespace: String,
@@ -121,7 +121,7 @@ where
 
                         Ok(result)
                     }
-                    Err(error) => return Err(format!("Failed to deserailize actions {}", error)),
+                    Err(error) => Err(format!("Failed to deserailize actions {}", error)),
                 }
             }
 

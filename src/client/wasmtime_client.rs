@@ -149,7 +149,7 @@ impl Service for WasmClient {
                         }
                         Err(error) => Err(error.to_string()),
                     },
-                    Err(error) => return Err(format!("{}", error)),
+                    Err(error) => Err(format!("{}", error)),
                 },
                 _ => {
                     let code = response.status_code;

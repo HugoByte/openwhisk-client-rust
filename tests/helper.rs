@@ -58,7 +58,7 @@ async fn create_server() -> MockServer {
 pub async fn get() -> MockServer {
     let server = create_server().await;
 
-    let r = vec![action_data().clone()];
+    let r = vec![action_data()];
 
     Mock::given(method("GET"))
         .and(path("/api/v1/namespaces/guest/actions"))
@@ -93,7 +93,7 @@ pub async fn get() -> MockServer {
         .mount(&server)
         .await;
 
-    let rules = vec![rule_data().clone()];
+    let rules = vec![rule_data()];
     Mock::given(method("GET"))
         .and(path("/api/v1/namespaces/guest/rules"))
         .respond_with(
@@ -176,23 +176,21 @@ pub async fn delete() -> MockServer {
 
 pub async fn put(action: Option<Action>) -> MockServer {
     let server = create_server().await;
-    match action {
-        Some(action) => {
-            Mock::given(method("PUT"))
-                .and(path("/api/v1/namespaces/guest/actions/cars"))
-                .and(query_param("overwrite", "true"))
-                .respond_with(
-                    ResponseTemplate::new(200)
-                        .insert_header("Content-Type", "application/json")
-                        .set_body_json(action.clone()),
-                )
-                .mount(&server)
-                .await;
-        }
-        None => {}
+
+    if let Some(action) = action {
+        Mock::given(method("PUT"))
+            .and(path("/api/v1/namespaces/guest/actions/cars"))
+            .and(query_param("overwrite", "true"))
+            .respond_with(
+                ResponseTemplate::new(200)
+                    .insert_header("Content-Type", "application/json")
+                    .set_body_json(action.clone()),
+            )
+            .mount(&server)
+            .await;
     }
 
-    let r = vec![action_data().clone()];
+    let r = vec![action_data()];
 
     Mock::given(method("GET"))
         .and(path("/api/v1/namespaces/guest/actions"))

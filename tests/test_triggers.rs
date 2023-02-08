@@ -9,7 +9,7 @@ async fn test_list_triggers_native_client() {
     let wsk_properties = WskProperties::new(
         "23bc46b1-71f6-4ed5-8c54-816aa4f8c502:123zO3xZCLrMN6v2BKK1dXYFpXlPkccOFqm12CdAsMgRU4VrNZ9lyGVCGuMDGIwP".to_string(),
         server.uri(),
-          true, 
+          true,
          "guest".to_string(), 
     );
 
@@ -26,8 +26,8 @@ async fn test_create_trigger_native_client() {
     let wsk_properties = WskProperties::new(
         "23bc46b1-71f6-4ed5-8c54-816aa4f8c502:123zO3xZCLrMN6v2BKK1dXYFpXlPkccOFqm12CdAsMgRU4VrNZ9lyGVCGuMDGIwP".to_string(),
         server.uri(),
-          true, 
-         "guest".to_string(), 
+          true,
+         "guest".to_string(),
     );
 
     let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
@@ -60,9 +60,9 @@ async fn test_delete_trigger_native_client() {
     let server = delete().await;
     let wsk_properties = WskProperties::new(
         "23bc46b1-71f6-4ed5-8c54-816aa4f8c502:123zO3xZCLrMN6v2BKK1dXYFpXlPkccOFqm12CdAsMgRU4VrNZ9lyGVCGuMDGIwP".to_string(),
-         server.uri(), 
-          true, 
-         "guest".to_string(), 
+         server.uri(),
+          true,
+         "guest".to_string(),
     );
 
     let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));

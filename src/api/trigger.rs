@@ -42,7 +42,7 @@ pub struct Trigger {
     pub limits: Limits,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq)]
 pub struct KeyValue {
     pub key: String,
     pub value: Value,
