@@ -43,6 +43,7 @@ async fn test_create_rule_native_clients() {
         name: "rule1".to_string(),
         trigger: "trigger1".to_string(),
         action: "cartype".to_string(),
+        status: "active".to_string(),
     };
     let rule = serde_json::to_value(client.rules().insert(&rule, true).unwrap()).unwrap();
 

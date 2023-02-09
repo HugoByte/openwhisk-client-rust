@@ -18,6 +18,7 @@ pub struct Rule {
     pub name: String,
     pub trigger: String,
     pub action: String,
+    pub status: String,
 }
 
 impl Rule {
@@ -30,6 +31,7 @@ impl Rule {
             name: rule.name.clone(),
             trigger,
             action,
+            status: rule.status.clone(),
         })
     }
 }
