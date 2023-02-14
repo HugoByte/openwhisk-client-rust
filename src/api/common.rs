@@ -6,7 +6,7 @@ pub static TRIGGERS_ENDPOINT: &str = "triggers";
 pub static RULES_ENDPOINT: &str = "rules";
 pub static NAMESPACE_ENDPOINT: &str = "namespaces";
 
-#[derive(Debug, Deserialize, Serialize, Clone, Default, PartialEq)]
+#[derive(Debug, Deserialize, Serialize, Clone, Default, PartialEq, Eq)]
 pub struct Limits {
     /// Timeout is the range set for per action in milliseconds
     #[serde(default)]

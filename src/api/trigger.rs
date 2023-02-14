@@ -5,10 +5,6 @@ use derive_new::new;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-fn default_0() -> String {
-    "0.0.1".to_string()
-}
-
 /// Representation of Trigger Service
 #[derive(new, Default, Debug, Clone)]
 pub struct TriggerService<T> {
@@ -41,12 +37,12 @@ pub struct Trigger {
     #[serde(default)]
     pub parameters: Vec<KeyValue>,
     /// Trigger rate Limits  
-    #[serde(skip_deserializing)]
+    #[serde(default)]
     #[serde(skip_serializing)]
     pub limits: Limits,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq)]
 pub struct KeyValue {
     pub key: String,
     pub value: Value,
