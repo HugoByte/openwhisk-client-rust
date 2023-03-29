@@ -1,4 +1,4 @@
-use openwhisk_rust::{KeyValue, NativeClient, OpenwhiskClient, Trigger, WskProperties};
+use openwhisk_client_rust::{KeyValue, NativeClient, OpenwhiskClient, Trigger, WskProperties};
 
 pub mod helper;
 use crate::helper::{delete, get, put};
@@ -9,9 +9,8 @@ async fn test_list_triggers_native_client() {
     let wsk_properties = WskProperties::new(
         "23bc46b1-71f6-4ed5-8c54-816aa4f8c502:123zO3xZCLrMN6v2BKK1dXYFpXlPkccOFqm12CdAsMgRU4VrNZ9lyGVCGuMDGIwP".to_string(),
         server.uri(),
-          true,
          "guest".to_string(), 
-    );
+        ).set_bypass_cerificate_check(true);
 
     let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
 
@@ -26,9 +25,8 @@ async fn test_create_trigger_native_client() {
     let wsk_properties = WskProperties::new(
         "23bc46b1-71f6-4ed5-8c54-816aa4f8c502:123zO3xZCLrMN6v2BKK1dXYFpXlPkccOFqm12CdAsMgRU4VrNZ9lyGVCGuMDGIwP".to_string(),
         server.uri(),
-          true,
          "guest".to_string(),
-    );
+        ).set_bypass_cerificate_check(true);
 
     let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
 
@@ -52,6 +50,7 @@ async fn test_create_trigger_native_client() {
 
     let triggers = serde_json::to_value(result).unwrap();
     let expected: String = serde_json::to_string(&triggers).unwrap();
+    
     assert!(expected.contains("trigger"));
 }
 
@@ -61,9 +60,8 @@ async fn test_delete_trigger_native_client() {
     let wsk_properties = WskProperties::new(
         "23bc46b1-71f6-4ed5-8c54-816aa4f8c502:123zO3xZCLrMN6v2BKK1dXYFpXlPkccOFqm12CdAsMgRU4VrNZ9lyGVCGuMDGIwP".to_string(),
          server.uri(),
-          true,
          "guest".to_string(),
-    );
+        ).set_bypass_cerificate_check(true);
 
     let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
 
