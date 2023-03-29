@@ -1,6 +1,6 @@
 pub mod helper;
 
-use openwhisk_client_rust::{
+use openwhisk_rust::{
     Action, ActionList, Exec, KeyValue, NativeClient, OpenwhiskClient, WskProperties,
 };
 
@@ -13,8 +13,9 @@ async fn test_list_actions_native_client() {
     let wsk_properties = WskProperties::new(
         "23bc46b1-71f6-4ed5-8c54-816aa4f8c502:123zO3xZCLrMN6v2BKK1dXYFpXlPkccOFqm12CdAsMgRU4VrNZ9lyGVCGuMDGIwP".to_string(),
         server.uri(),
+         true,
          "guest".to_string(), 
-    ).set_bypass_cerificate_check(true);
+    );
 
     let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
 
@@ -36,8 +37,9 @@ async fn test_get_action_property_native_client() {
     let wsk_properties = WskProperties::new(
         "23bc46b1-71f6-4ed5-8c54-816aa4f8c502:123zO3xZCLrMN6v2BKK1dXYFpXlPkccOFqm12CdAsMgRU4VrNZ9lyGVCGuMDGIwP".to_string(),
          server.uri(),
+          true,
          "guest".to_string(), 
-        ).set_bypass_cerificate_check(true);
+    );
 
     let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
     let actions = serde_json::to_value(client.actions().get("cars", false).unwrap()).unwrap();
@@ -52,8 +54,9 @@ async fn test_delete_action_native_client() {
     let wsk_properties = WskProperties::new(
         "23bc46b1-71f6-4ed5-8c54-816aa4f8c502:123zO3xZCLrMN6v2BKK1dXYFpXlPkccOFqm12CdAsMgRU4VrNZ9lyGVCGuMDGIwP".to_string(),
          server.uri(),
+         true,
          "guest".to_string(),
-        ).set_bypass_cerificate_check(true);
+    );
 
     let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
 
@@ -96,8 +99,9 @@ async fn test_create_action() {
     let wsk_properties = WskProperties::new(
         "23bc46b1-71f6-4ed5-8c54-816aa4f8c502:123zO3xZCLrMN6v2BKK1dXYFpXlPkccOFqm12CdAsMgRU4VrNZ9lyGVCGuMDGIwP".to_string(),
          server.uri(),
+         true,
          "guest".to_string(),
-        ).set_bypass_cerificate_check(true);
+    );
 
     let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
 

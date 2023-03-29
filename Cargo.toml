@@ -1,5 +1,5 @@
 [package]
-name = "openwhisk-client-rust"
+name = "openwhisk-rust"
 version = "0.1.5"
 authors = ["HugoByte <hello@hugobyte.com>"]
 repository = "https://github.com/hugobyte/openwhisk-client-rust"

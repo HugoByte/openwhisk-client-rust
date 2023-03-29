@@ -1,102 +1,89 @@
 # Openwhisk Client Rust
 
-The OpenWhisk Rust Client is a Rust library for interacting with the OpenWhisk API. It enables developers to easily access OpenWhisk features from their Rust applications.
+## Description
 
-## Prerequisites
+This project Openwhisk-client-Rust is a Rust client library to access the Openwhisk API.
+This Project comes with Native and Wasm Support.
 
-Ensure the latest version of Rust is installed and configured on your system.
+## Setup
 
-## Installation
+### Prerequisites
 
-Add the following to your `Cargo.toml` file:
+This Project requies latest verion of rust to be installed and configured.
 
-```toml
-[dependencies]
-openwhisk-rust = { version = "0.1.5", default-features = false }
+## Configuration
+
+The parameters of API_HOST, NAMESPACE and AUTH_TOKEN will be used to access the OpenWhisk services.
+
+Configure your Openwhisk client by setting the whisk properties.
+
 ```
-Then, run `cargo build` to download and compile the OpenWhisk Rust Client.
-
-## Usage
-To start using the OpenWhisk Rust Client, you need to configure the client with your OpenWhisk credentials and settings.
-
-### Configuration
-
-Create a `WskProperties` instance with your API host, auth token, namespace, and connection security preference:
-
-```rust
 let wsk_properties = WskProperties::new(
 			"<Openwhisk_Auth_Token>",
 			"<Openwhisk_API_Host>",
-			"<Namespace>"
+			 <insecure(Bool: for secure or insecure connection )>,
+			 "<Namespace>"
  );
 ```
-- **Openwhisk_Auth_Token**: This is the authentication token used to authenticate requests to the OpenWhisk API. You can obtain this token from the OpenWhisk console by going to the "API Key" section under the "Namespace" tab. You should replace `<Openwhisk_Auth_Token>` in the code snippet with the actual token string.
-- **Openwhisk_API_Host**: This is the hostname or IP address of the OpenWhisk API endpoint. You can find the endpoint URL in the OpenWhisk console by going to the "Endpoints" section under the "Namespace" tab. You should replace `<Openwhisk_API_Host>` in the code snippet with the actual endpoint URL.
-- **Namespace**: This is the name of the OpenWhisk namespace that you want to interact with. You can find your namespace name in the OpenWhisk console under the "Namespace" tab. You should replace `<Namespace>` in the code snippet with the actual namespace name.
+
+## Usage
 
 ### Examples
 
-Here are a few examples of how to use the OpenWhisk Rust Client:
+- `Invoke a deployed Action`
 
-- **Invoke a deployed Action:**
-
-```rust
-use openwhisk_rust::{NativeClient, OpenwhiskClient, WskProperties};
-
-let wsk_properties = WskProperties::new(
+```
+ let wsk_properties = WskProperties::new(
 			"<Openwhisk_Auth_Token>",
-			"<Openwhisk_API_Host>",
-			"<Namespace>"
+			"<Openwhisk_API_Hosy>",
+			 <Bool(true/false)>,
+			 "<Namespace>"
 	  );
+ let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
 
-let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
-
-client.actions().invoke("action_name",serde_json::json!({"key":"value"}),true,true).unwrap();
+ client.actions().invoke("your action name",serde_json::json!({"key":"value"}),true,true).unwrap();
 
 ```
 
-- **Get a list of available triggers**
+- ` Get list of available triggers`
 
-```rust
-use openwhisk_rust::{NativeClient, OpenwhiskClient, WskProperties};
-
-let wsk_properties = WskProperties::new(
+```
+ let wsk_properties = WskProperties::new(
 			"<Openwhisk_Auth_Token>",
-			"<Openwhisk_API_Host>",
-			"<Namespace>"
+			"<Openwhisk_API_Hosy>",
+			 <Bool(true/false)>,
+			 "<Namespace>"
 	  );
+ let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
 
-let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
-
-let triggers = client.triggers().list().unwrap();
+ let triggers = client.triggers().list().unwrap();
 ```
 
-- **Get a list of available rules**
+- ` Get the properties of the rule`
 
-```rust
-use openwhisk_rust::{NativeClient, OpenwhiskClient, Rule, RuleResponse, WskProperties};
-
-let wsk_properties = WskProperties::new(
+```
+ let wsk_properties = WskProperties::new(
 			"<Openwhisk_Auth_Token>",
-			"<Openwhisk_API_Host>",
-			"<Namespace>"
+			"<Openwhisk_API_Hosy>",
+			 <Bool(true/false)>,
+			 "<Namespace>"
 	  );
-	  
-let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
+ let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
+ let properties = client.rules().list().unwrap();
 
-let properties = client.rules().list().unwrap();
 ```
 
-## Testing
-Run the test suite using
+## Test
 
-```bash
+```
 cargo test
 ```
 
 ## Contributions
 
-We welcome contributions to improve the library, add new features, and fix bugs. To contribute, follow these steps:
+Contributions welcome particularly for enhancement of this library and also adding new functionality which helps in seamless interaction with Openwhisk Apis in rust applications.
+
+### Follow these steps for contributing
 
 - Fork the repository
 - Clone your fork
