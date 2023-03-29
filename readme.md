@@ -12,7 +12,7 @@ Add the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-openwhisk-client-rust = { version = "0.1.5", default-features = false }
+openwhisk-client-rust = { version = "0.1.6", default-features = false }
 ```
 Then, run `cargo build` to download and compile the OpenWhisk Rust Client.
 
