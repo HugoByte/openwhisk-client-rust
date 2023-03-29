@@ -8,13 +8,12 @@ pub struct WhiskError {
     pub code: String,
     pub error: String,
 }
-
-/// Representation of OpenWhisk Properties
+/// Representation  of OpenWhisk Properties
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct WskProperties {
-    /// Auth_token - `:` separated username and password
+    /// Auth_token - `:` seperated username and passeord
     pub auth_token: String,
-    /// Api Host to interact with OpenWhisk API
+    /// Api Host to interact with Openwhisk API
     pub host: String,
     /// Version
     #[serde(default = "default")]
@@ -26,7 +25,7 @@ pub struct WskProperties {
     /// Verbose - Toggle to enable it
     #[serde(default = "bool::default")]
     pub verbose: bool,
-    /// Debug - Toggle to enable it
+    /// Debug - Toggle to ennable it
     #[serde(default = "bool::default")]
     pub debug: bool,
 }
@@ -35,29 +34,30 @@ fn default() -> String {
     "v1".to_string()
 }
 
-/// Context used to set Whisk properties
+/// Context which used to set whisk properties
 #[derive(Debug, Deserialize, Serialize, Clone, Default)]
 pub struct Context {
     /// API Host Url
     host: String,
-    /// Namespace where actions, triggers, rules exist
+    /// Namespace where actions,triggrs, rules exists
     namespace: String,
-    /// Toggle to make secure and insecure connection (Set true or false)
+    /// Toggle to make secure and inscure connection (Set true or false)
     insecure: bool,
     /// Username for Authentication which is set by auth_token
     username: String,
-    /// Password for Authentication which is set by auth_token
+    /// Passwod for Authentication which is set by auth_token
     password: String,
-    /// Version
+    /// Verion
     version: String,
 }
 
 impl WskProperties {
-    /// New Creates OpenWhisk properties
+    /// New Creates Openwhisk properties
     ///
     /// # Arguments
     /// * `auth_token`  - The authorization token
     /// * `host`        - The API url
+    /// * `insecure`    - Toggle for secure connection
     /// * `namespace`   - Name of the namespace
     ///
     /// # Example
@@ -68,94 +68,28 @@ impl WskProperties {
     /// let new_wsk_property = WskProperties::new(
     /// "your:auth_token".to_string(),
     /// "host".to_string(),
+    /// true,
     /// "namespace".to_string()
     /// );
     ///
     /// ```
-    pub fn new(auth_token: String, host: String, namespace: String) -> Self {
+    pub fn new(auth_token: String, host: String, insecure: bool, namespace: String) -> Self {
         Self {
             auth_token,
             host,
-            insecure: false,
+            insecure,
             namespace,
             version: default(),
             ..Default::default()
         }
     }
 
-    /// To set Debug
+    /// To set Verbose, Version and Debug
     ///
     /// # Arguments
     /// * `debug`   - Bool to toggle debug
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use openwhisk_rust::WskProperties;
-    ///
-    /// let wsk_property = WskProperties::new(
-    /// "your:auth_token".to_string(),
-    /// "host".to_string(),
-    /// "namespace".to_string()
-    /// ).set_debug(false);
-    ///
-    /// ```
-    pub fn set_debug(mut self, debug: bool) -> Self {
-        self.debug = debug;
-
-        self
-    }
-
-    /// To set Verbose
-    ///
-    /// # Arguments
     /// * `verbose` - Bool to toggle verbose
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use openwhisk_rust::WskProperties;
-    ///
-    /// let wsk_property = WskProperties::new(
-    /// "your:auth_token".to_string(),
-    /// "host".to_string(),
-    /// "namespace".to_string()
-    /// ).set_verbose(false);
-    ///
-    /// ```
-    pub fn set_verbose(mut self, verbose: bool) -> Self {
-        self.verbose = verbose;
-
-        self
-    }
-
-    /// To set Version
-    ///
-    /// # Arguments
-    /// * `version` - Version of Wsk properties
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use openwhisk_rust::WskProperties;
-    ///
-    /// let wsk_property = WskProperties::new(
-    /// "your:auth_token".to_string(),
-    /// "host".to_string(),
-    /// "namespace".to_string()
-    /// ).set_version("v2".to_string());
-    ///
-    /// ```
-    pub fn set_version(mut self, version: String) -> Self {
-        self.version = version;
-
-        self
-    }
-
-    /// To set client to bypass cerificate check primarily useful if you are using the OpenWhisk API over HTTPS and the API endpoint is using a self-signed or invalid certificate.
-    ///
-    /// # Arguments
-    /// * `bypass`   - Bool to toggle bypass cerificate check
+    /// * `version` - Version of wsk properties
     ///
     /// # Example
     ///
@@ -165,26 +99,35 @@ impl WskProperties {
     /// let new_wsk_property = WskProperties::new(
     /// "your:auth_token".to_string(),
     /// "host".to_string(),
+    /// true,
     /// "namespace".to_string()
-    /// ).set_bypass_cerificate_check(true);
+    /// );
+    ///
+    /// new_wsk_property.set_verbose_debug_version(false,false,"v2".to_string());
     ///
     /// ```
-    pub fn set_bypass_cerificate_check(mut self, bypass: bool) -> Self {
-        self.insecure = bypass;
-
-        self
+    pub fn set_verbose_debug_version(&self, debug: bool, verbose: bool, version: String) -> Self {
+        Self {
+            auth_token: self.auth_token.clone(),
+            host: self.host.clone(),
+            version,
+            insecure: self.insecure,
+            namespace: self.namespace.clone(),
+            verbose,
+            debug,
+        }
     }
 }
 
-/// Trait OpenWhisk
+/// Trait Openwhisk
 pub trait OpenWhisk {
     type Output;
-    /// Creates a new OpenWhisk client
+    /// creates new openwhisk client
     fn new_whisk_client(insecure: Option<bool>) -> Self::Output;
 }
 
 impl Context {
-    /// Creates and returns context based on the Whisk Properties supplied
+    /// Creates and retruns context based on the Whisk Properties supplied
     ///
     /// # Arguments
     /// * `wskprops` - Option of WhiskProperties
@@ -215,7 +158,7 @@ impl Context {
             }
         };
 
-        let connection_type = match wskprops {
+        let connectiontype = match wskprops {
             Some(config) => config.insecure,
             None => false,
         };
@@ -228,14 +171,14 @@ impl Context {
         Context {
             host,
             namespace,
-            insecure: connection_type,
+            insecure: connectiontype,
             username: auth[0].to_string(),
             password: auth[1].to_string(),
             version,
         }
     }
 
-    /// Returns namespace value
+    /// Returns namspace value
     pub fn namespace(&self) -> &str {
         &self.namespace
     }
