@@ -12,7 +12,7 @@ Add the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-openwhisk-rust = { version = "0.1.5", default-features = false }
+openwhisk-client-rust = { version = "0.1.5", default-features = false }
 ```
 Then, run `cargo build` to download and compile the OpenWhisk Rust Client.
 
@@ -41,7 +41,7 @@ Here are a few examples of how to use the OpenWhisk Rust Client:
 - **Invoke a deployed Action:**
 
 ```rust
-use openwhisk_rust::{NativeClient, OpenwhiskClient, WskProperties};
+use openwhisk_client_rust::{NativeClient, OpenwhiskClient, WskProperties};
 
 let wsk_properties = WskProperties::new(
 			"<Openwhisk_Auth_Token>",
@@ -58,7 +58,7 @@ client.actions().invoke("action_name",serde_json::json!({"key":"value"}),true,tr
 - **Get a list of available triggers**
 
 ```rust
-use openwhisk_rust::{NativeClient, OpenwhiskClient, WskProperties};
+use openwhisk_client_rust::{NativeClient, OpenwhiskClient, WskProperties};
 
 let wsk_properties = WskProperties::new(
 			"<Openwhisk_Auth_Token>",
@@ -74,7 +74,7 @@ let triggers = client.triggers().list().unwrap();
 - **Get a list of available rules**
 
 ```rust
-use openwhisk_rust::{NativeClient, OpenwhiskClient, Rule, RuleResponse, WskProperties};
+use openwhisk_client_rust::{NativeClient, OpenwhiskClient, Rule, RuleResponse, WskProperties};
 
 let wsk_properties = WskProperties::new(
 			"<Openwhisk_Auth_Token>",
