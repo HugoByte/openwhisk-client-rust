@@ -12,11 +12,13 @@ Add the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-openwhisk-client-rust = { version = "0.1.6", default-features = false }
+openwhisk-client-rust = { version = "0.1.7", default-features = false }
 ```
+
 Then, run `cargo build` to download and compile the OpenWhisk Rust Client.
 
 ## Usage
+
 To start using the OpenWhisk Rust Client, you need to configure the client with your OpenWhisk credentials and settings.
 
 ### Configuration
@@ -30,6 +32,7 @@ let wsk_properties = WskProperties::new(
 			"<Namespace>"
  );
 ```
+
 - **Openwhisk_Auth_Token**: This is the authentication token used to authenticate requests to the OpenWhisk API. You can obtain this token from the OpenWhisk console by going to the "API Key" section under the "Namespace" tab. You should replace `<Openwhisk_Auth_Token>` in the code snippet with the actual token string.
 - **Openwhisk_API_Host**: This is the hostname or IP address of the OpenWhisk API endpoint. You can find the endpoint URL in the OpenWhisk console by going to the "Endpoints" section under the "Namespace" tab. You should replace `<Openwhisk_API_Host>` in the code snippet with the actual endpoint URL.
 - **Namespace**: This is the name of the OpenWhisk namespace that you want to interact with. You can find your namespace name in the OpenWhisk console under the "Namespace" tab. You should replace `<Namespace>` in the code snippet with the actual namespace name.
@@ -81,13 +84,14 @@ let wsk_properties = WskProperties::new(
 			"<Openwhisk_API_Host>",
 			"<Namespace>"
 	  );
-	  
+
 let client = OpenwhiskClient::<NativeClient>::new(Some(&wsk_properties));
 
 let properties = client.rules().list().unwrap();
 ```
 
 ## Testing
+
 Run the test suite using
 
 ```bash
