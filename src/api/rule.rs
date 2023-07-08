@@ -228,7 +228,7 @@ where
         let pass = auth.1;
 
         let request = match self.client.new_request(
-            Some(HttpMethods::PUT),
+            Some(HttpMethods::DELETE),
             url.as_str(),
             Some((user, pass)),
             None,
