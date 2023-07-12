@@ -103,7 +103,7 @@ impl Service for NativeClient {
     fn invoke_request(&self, request: Self::Output) -> Result<Value, String> {
         match request.send() {
             Ok(response) => match response.status() {
-                StatusCode::OK => Ok(response.json().unwrap()),
+                StatusCode::OK => Ok(response.json().unwrap_or_default()),
                 _ => {
                     let code = response.status();
                     let error: WhiskError = response.json().unwrap();

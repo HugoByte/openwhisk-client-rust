@@ -28,7 +28,7 @@ pub struct Action {
     pub version: String,
     /// A action can take concurrrent limit
     #[serde(default)]
-    pub limits: Limits,
+    pub limits: Option<Limits>,
     /// A action must have Exec properties
     pub exec: Exec,
     /// A action must have error to handle error created
