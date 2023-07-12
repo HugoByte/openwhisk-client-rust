@@ -163,10 +163,7 @@ where
 
         match self.client.invoke_request(request) {
             Ok(x) => match serde_json::from_value(x) {
-                Ok(actions) => {
-                    println!("helooo {:?}", actions);
-                    Ok(actions)
-                }
+                Ok(actions) => Ok(actions),
                 Err(err) => Err(format!("Failed to deserailize rule {}", err)),
             },
             Err(x) => Err(format!("Failed to create rule {}", x)),
