@@ -32,6 +32,7 @@ fn action_data() -> Action {
             key: "feed".to_string(),
             value: serde_json::json!({}),
         }],
+        parameters: vec![],
     }
 }
 

@@ -89,6 +89,7 @@ async fn test_create_action() {
             key: "feed".to_string(),
             value: serde_json::json!({}),
         }],
+        parameters: vec![],
     };
 
     let server = put(Some(action.clone())).await;

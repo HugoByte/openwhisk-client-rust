@@ -42,6 +42,9 @@ pub struct Action {
     pub updated: i64,
     /// Keyvalue pair for annotate Actions
     pub annotations: Vec<KeyValue>,
+    /// Keyvalue pair for action parameter
+    #[serde(default)]
+    pub parameters: Vec<KeyValue>,
 }
 
 /// Actions Execucatble properties
