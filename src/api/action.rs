@@ -28,7 +28,7 @@ pub struct Action {
     pub version: String,
     /// A action can take concurrrent limit
     #[serde(default)]
-    pub limits: Limits,
+    pub limits: Option<Limits>,
     /// A action must have Exec properties
     pub exec: Exec,
     /// A action must have error to handle error created
@@ -42,6 +42,9 @@ pub struct Action {
     pub updated: i64,
     /// Keyvalue pair for annotate Actions
     pub annotations: Vec<KeyValue>,
+    /// Keyvalue pair for action parameter
+    #[serde(default)]
+    pub parameters: Vec<KeyValue>,
 }
 
 /// Actions Execucatble properties

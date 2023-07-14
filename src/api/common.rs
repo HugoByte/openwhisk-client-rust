@@ -10,16 +10,16 @@ pub static NAMESPACE_ENDPOINT: &str = "namespaces";
 pub struct Limits {
     /// Timeout is the range set for per action in milliseconds
     #[serde(default)]
-    pub timeout: i64,
+    pub timeout: Option<i64>,
     /// Memory is the range set per action in MB
     #[serde(default)]
-    pub memory: i64,
+    pub memory: Option<i64>,
     /// The size for the log file
     #[serde(default)]
-    pub logsize: i64,
+    pub logsize: Option<i64>,
     /// Number of activations that can be processed at once
     #[serde(default)]
-    pub concurrency: i64,
+    pub concurrency: Option<i64>,
 }
 
 /// Enum of HTTP Methods

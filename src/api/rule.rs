@@ -252,7 +252,7 @@ where
     /// * `rule_name` - String slice that holds rule name
     /// * 'state' - Execution state of the rule    
     ///
-    pub fn setstate(&self, rule_name: &str, state: &str) -> Result<RuleResponse, String> {
+    pub fn set_state(&self, rule_name: &str, state: &str) -> Result<String, String> {
         let state = state.to_lowercase();
 
         if state != "active" && state != "inactive" {
@@ -289,10 +289,7 @@ where
             };
 
             match self.client.invoke_request(request) {
-                Ok(x) => match serde_json::from_value(x) {
-                    Ok(actions) => Ok(actions),
-                    Err(err) => Err(format!("Failed to deserailize rule {}", err)),
-                },
+                Ok(_x) => Ok("The rule is updated".to_string()),
                 Err(x) => Err(format!("Failed to SetState for Rule {}", x)),
             }
         }

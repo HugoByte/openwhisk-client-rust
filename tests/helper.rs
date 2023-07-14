@@ -10,12 +10,12 @@ fn action_data() -> Action {
         namespace: "guest".to_string(),
         name: "cars".to_string(),
         version: "".to_string(),
-        limits: Limits {
-            timeout: 1,
-            memory: 2,
-            logsize: 3,
-            concurrency: 3,
-        },
+        limits: Some(Limits {
+            timeout: Some(1),
+            memory: Some(2),
+            logsize: Some(3),
+            concurrency: Some(3),
+        }),
         exec: Exec {
             kind: "rust:1.34".to_string(),
             code: "bas64_data".to_string(),
@@ -32,6 +32,7 @@ fn action_data() -> Action {
             key: "feed".to_string(),
             value: serde_json::json!({}),
         }],
+        parameters: vec![],
     }
 }
 
